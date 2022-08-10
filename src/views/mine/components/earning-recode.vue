@@ -1,6 +1,6 @@
 <template>
   <div class="earning-recode sub-page">
-    <nav-bar :title="$t('收益记录')">
+    <nav-bar :title="$t('帐变记录')">
       <template #right>
         <van-image :src="require('@/assets/mine/menu-icon.png')" @click="handleShowSelect"></van-image>
       </template>
@@ -16,8 +16,9 @@
               <div class="type">{{ item.type_text }}</div>
               <div class="time">{{ item.addtime }}</div>
             </div>
-            <div class="money">
-              <span>{{ item.num_text }}</span>
+            <div class="right-wrap">
+              <div class="money">{{ item.num_text || item.num }}</div>
+              <div class="desc" v-if="type === 6">{{ item.note || item.error_msg }}</div>
             </div>
           </div>
         </van-list>
@@ -45,20 +46,20 @@ export default {
       //   title: this.$t('系统'),
       //   value: 0
       // },
-      // {
-      //   title: this.$t('押金'),
-      //   value: 1
-      // },
       {
-        title: this.$t('返佣'),
-        value: 3
+        title: this.$t('充值'),
+        value: 1
       },
       // {
-      //   title: this.$t('退税'),
-      //   value: 4
+      //   title: this.$t('返佣'),
+      //   value: 3
       // },
       {
-        title: this.$t('推广返佣'),
+        title: this.$t('佣金'),
+        value: 4
+      },
+      {
+        title: this.$t('团队收益'),
         value: 5
       },
       {
@@ -69,14 +70,22 @@ export default {
         title: this.$t('理财收益'),
         value: 7
       },
-      // {
-      //   title: this.$t('冻结'),
-      //   value: 8
-      // },
-      // {
-      //   title: this.$t('解冻'),
-      //   value: 9
-      // },
+      {
+        title: this.$t('冻结(押金)'),
+        value: 8
+      },
+      {
+        title: this.$t('解冻(押金退还)'),
+        value: 9
+      },
+      {
+        title: this.$t('赠送'),
+        value: 10
+      },
+      {
+        title: this.$t('购买任务助手'),
+        value: 12
+      },
     ]
     return {
       selectList,
@@ -86,7 +95,7 @@ export default {
       finished: false,
       empty: false,
       page: 1,
-      type: 3
+      type: 1
     }
   },
   computed: {
@@ -101,7 +110,7 @@ export default {
     async tranRecord() {
       const params = {
         type: this.type,
-        limit: 20,
+        limit: 10,
         page: this.page
       }
       try {
@@ -113,7 +122,7 @@ export default {
           if (this.recodeList.length === 0) this.empty = true;
           else this.empty = false
           this.page += 1
-          if (res.data.length < 20) this.finished = true
+          if (res.data.length < 10) this.finished = true
         } else {
           this.$toast.fail(res.msg || res.message)
         }
@@ -129,7 +138,7 @@ export default {
       this.page = 1
       this.finished = false
       this.visible = false
-      this.getDetails()
+      this.tranRecord()
     },
   },
 }
@@ -141,6 +150,8 @@ export default {
   height: 10px;
 }
 .container {
+  height: calc(100% - 50px);
+  overflow: auto;
   padding-top: 5px;
   .recode-content {
     .recode-item {
@@ -178,6 +189,18 @@ export default {
         line-height: 16px;
         letter-spacing: 0px;
         color: #f57e0a;
+        text-align: right;
+        margin-bottom: 8px;
+      }
+      .desc {
+        font-family: PingFang-SC-Medium;
+        font-size: 12px;
+        line-height: 12px;
+        font-weight: normal;
+        font-stretch: normal;
+        letter-spacing: 0px;
+        color: #cccccc;
+        text-align: right;
       }
     }
   }

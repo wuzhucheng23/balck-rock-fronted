@@ -4,10 +4,23 @@
     <div class="container">
       <div class="info-box">
         <div class="content">
+<!--          <div class="content-item">-->
+<!--            <div class="text">{{ $t('电话号码') }}</div>-->
+<!--            <div class="value">-->
+<!--              <van-field v-model="phone" :placeholder="$t('请输入电话号码')" type="text">-->
+<!--                <template #label>-->
+<!--                  <span @click="handleShowCode" class="label-code">+{{ areaCode }}</span>-->
+<!--                </template>-->
+<!--              </van-field>-->
+<!--            </div>-->
+<!--          </div>-->
           <div class="content-item">
-            <div class="text">{{ $t('邮箱') }}</div>
+            <div class="text">
+<!--              <van-image :src="require('@/assets/login/email-icon.png')"></van-image>-->
+              <span>{{ $t('邮箱') }}</span>
+            </div>
             <div class="value">
-              <van-field v-model="email" type="text" :placeholder="$t('请输入邮箱')"></van-field>
+              <van-field v-model="email" :placeholder="$t('请输入邮箱')" type="text"></van-field>
             </div>
           </div>
           <div class="content-item">
@@ -31,13 +44,13 @@
           <div class="content-item">
             <div class="text">{{ $t('新密码') }}</div>
             <div class="value">
-              <van-field v-model="newPwd" type="text" :placeholder="$t('请输入新密码')"></van-field>
+              <van-field v-model="newPwd" type="password" :placeholder="$t('请输入新密码')"></van-field>
             </div>
           </div>
           <div class="content-item">
             <div class="text">{{ $t('确认新密码') }}</div>
             <div class="value">
-              <van-field v-model="repeatNewPwd" type="text" :placeholder="$t('请输入确认新密码')"></van-field>
+              <van-field v-model="repeatNewPwd" type="password" :placeholder="$t('请输入确认新密码')"></van-field>
             </div>
           </div>
         </div>
@@ -48,6 +61,18 @@
       </div>
     </div>
     <result-dialog :visible.sync="visible" :result="$t('修改成功')" :btn="false" :desc="$t('正在跳转页面...')"></result-dialog>
+    <van-popup v-model="visiblePopup" round position="bottom">
+      <van-picker
+          show-toolbar
+          :columns="columns"
+          :default-index="defaultIndex"
+          :loading="initLoading"
+          :confirm-button-text="$t('确定')"
+          :cancel-button-text="$t('取消')"
+          @cancel="handleCancel"
+          @confirm="handleConfirm"
+      />
+    </van-popup>
   </div>
 </template>
 
@@ -60,18 +85,34 @@ export default {
       certificateCode: '',
       newPwd: '',
       repeatNewPwd: '',
-      time: 60 * 1000,
+      time: 180 * 1000,
       disabledSend: false,
       optLoading: false,
       loading: false,
-      visible: false
+      visible: false,
+      phone: '',
+      visiblePopup: false,
+      columns: [],
+      areaCodeList: [],
+      defaultIndex: 0,
+      initLoading: false,
+      areaCode: '',
     }
+  },
+  created() {
+    // this.getAreaCode()
   },
   methods: {
     async handleSendOpt() {
+      // if (!this.phone) return this.$toast(this.$t('请输入电话号码'))
       if (!this.email) return this.$toast(this.$t('请输入邮箱'))
       this.optLoading = true
-      const params = {email: this.email, type: 4}
+      const params = {
+        // tel: this.phone,
+        // areaId: this.areaCodeList.find(item => item.area_code === this.areaCode).id,
+        email: this.email,
+        type: 4,
+      }
       try {
         const res = await this.$api.login.emailVerify(params)
         if (res.code === 1) {
@@ -86,7 +127,26 @@ export default {
         this.optLoading = false
       }
     },
+    async getAreaCode () {
+      try {
+        // this.loading = true
+        const resp = await this.$api.login.getAreaCode();
+        if (resp.code === 1) {
+          const data = resp.data
+          this.areaCodeList = data
+          this.columns = data.map(item => item.area_code)
+          if (data.length > 0) this.areaCode = data[0].area_code
+        } else {
+          this.$toast.fail(resp.msg || resp.message)
+        }
+      } catch (e) {
+        this.$toast.fail(this.$t('发生错误'));
+      } finally {
+        // this.loading = false
+      }
+    },
     async handleUpdatePassword () {
+      // if (!this.phone) return this.$toast(this.$t('请输入电话号码'))
       if (!this.email) return this.$toast(this.$t('请输入邮箱'))
       if (!this.certificateCode) return this.$toast(this.$t('请输入验证码'))
       if (!this.newPwd) return this.$toast(this.$t('请输入新密码'))
@@ -95,7 +155,8 @@ export default {
       if (this.newPwd !== this.repeatNewPwd) return this.$toast(this.$t('新密码与确认新密码不一致'))
       this.loading = true
       const params = {
-        email: this.email,
+        // tel: this.areaCode + this.phone,
+        tel: this.email,
         verify_code: this.certificateCode,
         password: this.newPwd,
         password_confirm: this.repeatNewPwd,
@@ -117,7 +178,17 @@ export default {
     },
     handleFinish () {
       this.disabledSend = false
-    }
+    },
+    handleShowCode () {
+      this.visiblePopup = true
+    },
+    handleCancel () {
+      this.visiblePopup = false;
+    },
+    handleConfirm (value) {
+      this.areaCode = value
+      this.handleCancel();
+    },
   },
 }
 </script>
@@ -201,5 +272,21 @@ export default {
       color: #ffffff;
     }
   }
+}
+::v-deep .van-loading--spinner {
+  position: relative;
+  top: -1px;
+  margin-right: 6px;
+}
+
+::v-deep .van-popup--bottom {
+  border-radius: 10px 10px 0 0;
+}
+
+::v-deep .van-field__label {
+  color: #333;
+  font-size: 18px;
+  width: unset;
+  margin-right: 16px;
 }
 </style>

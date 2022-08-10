@@ -29,6 +29,10 @@ const login =  {
         const url = '/api/auth/changePwd'
         return await axios.post(url, params )
     },
+    async getAreaCode (params) {
+        const url = '/api/info/getAreaCode'
+        return await axios.get(url, {params} )
+    },
 }
 
 export default login

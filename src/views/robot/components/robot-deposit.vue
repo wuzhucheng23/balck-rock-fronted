@@ -3,13 +3,13 @@
     <nav-bar :title="$t('转入')"></nav-bar>
     <div class="container">
       <div class="money-box">
-        <div class="title">{{ $t('从我的余额转入机器人余额') }}</div>
+        <div class="title">{{ $t('从我的余额转入资产余额') }}</div>
         <div class="content">
           <div class="text">{{ $t('转入金额') }}</div>
           <div class="field">
-            <van-field v-model="money" type="number" :placeholder="$t('请输入转入金额')" label="R$" label-width="25px"></van-field>
+            <van-field v-model="money" type="number" :placeholder="$t('请输入转入金额')" label="$" label-width="25px"></van-field>
           </div>
-          <div class="my-money">{{ $t('您的余额') }}：<span class="money">R${{ balance }}</span></div>
+          <div class="my-money">{{ $t('您的余额') }}：<span class="money">${{ balance }}</span></div>
         </div>
       </div>
       <div class="btn-box">
@@ -18,7 +18,7 @@
       </div>
       <div class="tip-box">
         <div class="title">{{ $t('说明') }}：</div>
-        <div class="content">{{ $t('从我的余额转入机器人余额，用于购买机器，机器人余额可提现至我的余额。') }}</div>
+        <div class="content">{{ $t('从我的余额转入资产余额，用于购买方案，资产余额可提现至我的余额。') }}</div>
       </div>
     </div>
     <result-dialog :visible.sync="showResult" :result="$t('转入成功')" :btn="false" :desc="$t('正在跳转页面...')"></result-dialog>
@@ -33,7 +33,8 @@ export default {
       money: '',
       balance: '0.00',
       loading: false,
-      showResult: false
+      showResult: false,
+      buttonLoading: false
     }
   },
   created() {

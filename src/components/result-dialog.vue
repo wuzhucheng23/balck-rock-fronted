@@ -11,7 +11,7 @@
         </div>
         <div class="result">{{ result }}</div>
         <div class="btn">
-          <van-button block @click="handleOk" v-if="btn">{{ $t('确定') }}</van-button>
+          <van-button block @click="handleOk" v-if="btn">{{ btnText || $t('确定') }}</van-button>
           <div class="dialog-text" v-else>
             {{ desc }}
           </div>
@@ -36,6 +36,10 @@ export default {
     btn: {
       type: Boolean,
       default: () => true
+    },
+    btnText: {
+      type: String,
+      default: () => ''
     },
     desc: {
       type: String,

@@ -21,13 +21,25 @@ export default {
         title: 'English',
         value: 'en'
       },
+      // {
+      //   title: '简体中文',
+      //   value: 'cn'
+      // },
       {
-        title: '简体中文',
-        value: 'cn'
+        title: '繁体中文',
+        value: 'hk'
       },
       {
-        title: 'Português',
-        value: 'po'
+        title: 'Français',
+        value: 'fr'
+      },
+      {
+        title: 'Italiano',
+        value: 'it'
+      },
+      {
+        title: 'Deutschland',
+        value: 'de'
       },
     ]
     return {

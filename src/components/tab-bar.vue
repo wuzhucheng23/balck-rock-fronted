@@ -34,12 +34,12 @@ export default {
           activeImg: require('@/assets/common/home-active-icon.png'),
           inactiveImg: require('@/assets/common/home-inactive-icon.png')
         },
-        {
-          name: 'hall',
-          route: '/hall',
-          activeImg: require('@/assets/common/hall-active-icon.png'),
-          inactiveImg: require('@/assets/common/hall-inactive-icon.png')
-        },
+        // {
+        //   name: 'hall',
+        //   route: '/hall',
+        //   activeImg: require('@/assets/common/hall-active-icon.png'),
+        //   inactiveImg: require('@/assets/common/hall-inactive-icon.png')
+        // },
         {
           name: 'robot',
           route: '/robot',
@@ -59,9 +59,18 @@ export default {
           inactiveImg: require('@/assets/common/mine-inactive-icon.png')
         }
       ],
-      cn: ['首页', '大厅', '机器人','客服' , '我的'],
-      en: ['Home', 'Hall', 'Robot','Service' , 'Mine'],
-      po: ['Início', 'Lobby', 'Robôs','Cliente' , 'Meu'],
+      // cn: ['首页', '助手', '存币生息','客服' , '我的'],
+      cn: ['首页', '存币生息','客服' , '我的'],
+      // en: ['Home', 'Assistant', 'Asset manage','Service' , 'Mine'],
+      en: ['Home', 'Asset manage','Service' , 'Mine'],
+      // hk: ['首頁', '助手', '存幣生息','客服' , '我的'],
+      hk: ['首頁', '存幣生息','客服' , '我的'],
+      // fr: ['Page d\'accueil', 'Assistant', 'Gestion des actifs','Service' , 'Mon compte'],
+      fr: ['Page d\'accueil', 'Gestion des actifs','Service' , 'Mon compte'],
+      // it: ['prima pagina', 'Assistente', 'Gestione finanziaria','Servizio' , 'Il mio'],
+      it: ['prima pagina', 'Gestione finanziaria','Servizio' , 'Il mio'],
+      // de: ['prima pagina', 'Assistente', 'Gestione finanziaria','Servizio' , 'Il mio'],
+      de: ['Startseite', 'Vermögensverwaltung','Kundendienst' , 'Mein Konto'],
     };
   },
   computed: {
@@ -115,5 +124,9 @@ export default {
 .van-tabbar--fixed {
   left: 50%;
   transform: translateX(-50%);
+}
+
+::v-deep .van-tabbar-item__text{
+  white-space: nowrap;
 }
 </style>

@@ -81,7 +81,7 @@ export default {
       confirmWalletAddress: '',
       phone: '',
       code: '',
-      time: 60 * 1000,
+      time: 180 * 1000,
       disabledSend: false,
       optLoading: false,
       visible: false,

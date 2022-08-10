@@ -18,7 +18,7 @@
         </van-field>
         <div class="settlement-wrap">
           <span class="text">{{ $t('您的余额') }}：</span>
-          <span class="value">R${{ balance }}</span>
+          <span class="value">${{ balance }}</span>
         </div>
       </div>
       <div class="select-type-box">
@@ -35,13 +35,14 @@
             <div class="type">{{ item.name }}</div>
           </div>
         </div>
-        <div class="tip">{{ $t('友情提示：提现将收取手续费10%')}}</div>
+<!--        <div class="tip">{{ $t('友情提示：提现将收取手续费10%')}}</div>-->
       </div>
       <div class="btn-box">
-        <van-button block class="withdraw-to-card-btn" @click="handleShowPassword('card')">{{ $t('提现到银行卡') }}</van-button>
+<!--        <van-button block class="withdraw-to-card-btn" @click="handleShowPassword('card')">{{ $t('提现到银行卡') }}</van-button>-->
         <van-button block class="withdraw-btn" @click="handleShowPassword('wallet')">{{ $t('提现') }}</van-button>
       </div>
       <div class="withdraw-instructions-box">
+        <div class="title">{{ $t('提现说明') }}：</div>
         <div class="content" v-html="instructions"></div>
       </div>
     </div>
@@ -174,6 +175,7 @@ export default {
       if (this.withdrawType === 'card') this.cardId = 5
       const params = {
         id: +this.cardId,
+        type: this.cardId,
         amount: +this.money,
         pwd: this.pwd
       }
@@ -271,7 +273,7 @@ export default {
   }
   .select-type-box {
     background: #ffffff;
-    padding: 13px 15px 15px;
+    padding: 13px 6px 6px 15px;
     .title {
       font-family: PingFang-SC-Bold;
       font-size: 18px;
@@ -285,10 +287,10 @@ export default {
     .content {
       display: flex;
       flex-wrap: wrap;
-      justify-content: space-between;
-      margin-bottom: 9px;
+      //justify-content: space-between;
+      //margin-bottom: 9px;
       .content-item {
-        width: calc((100% - 18px) / 3);
+        width: calc((100% - 27px) / 3);
         height: 95px;
         background-color: #f8f8f8;
         border-radius: 5px;
@@ -296,6 +298,7 @@ export default {
         text-align: center;
         padding-top: 10px;
         margin-bottom: 10px;
+        margin-right: 9px;
         .van-image {
           width: 40px;
           height: 40px;
@@ -381,6 +384,16 @@ export default {
   }
   .withdraw-instructions-box {
     padding: 22px 15px 77px;
+    .title {
+      font-family: PingFang-SC-Medium;
+      font-size: 14px;
+      font-weight: normal;
+      font-stretch: normal;
+      line-height: 14px;
+      letter-spacing: 0px;
+      color: #333333;
+      margin-bottom: 12px;
+    }
     .content {
       font-family: PingFang-SC-Medium;
       font-size: 12px;

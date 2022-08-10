@@ -1,27 +1,56 @@
 <template>
   <div class="grab-order sub-page">
-    <nav-bar :title="title"></nav-bar>
+    <nav-bar :title="title">
+<!--      <template #right>-->
+<!--        <span class="money-rule" @click="handleToMoneyRule">{{ $t('押金规则') }}</span>-->
+<!--      </template>-->
+    </nav-bar>
     <div class="container">
+      <div class="brand-info-box">
+        <van-image :src="img"></van-image>
+        <div class="right-wrap">
+          <div class="title">{{ title }}</div>
+<!--          <div class="price">-->
+<!--            <span>${{ recharge }}</span>-->
+<!--            <van-button @click="handleDepositMoney">{{ $t('前往缴纳押金') }}</van-button>-->
+<!--          </div>-->
+        </div>
+      </div>
       <div class="info-box">
         <div class="info-item" v-for="item in infoList" :key="item.id">
           <div class="title">{{ item.title }}</div>
           <div class="value">
-            <span v-if="item.id !== 1 && item.id !== 2">BRL</span>
+            <span v-if="item.id !== 1 && item.id !== 2">USDT </span>
             <span>{{ item.value }}</span>
           </div>
         </div>
       </div>
       <div class="btn-box">
-        <van-button block @click="handleGrabOrder" v-if="infoList[0].value < infoList[1].value">{{ $t('立即抢单') }}</van-button>
-        <van-button block @click="handleComplete" v-else>{{ $t('结算佣金') }}</van-button>
+        <van-button block @click="handleGrabOrder">{{ $t('领取任务') }}</van-button>
+<!--        <van-button block @click="handleComplete">{{ $t('结算佣金') }}</van-button>-->
       </div>
-      <div class="instructions-box">
-        <div class="title">{{ $t('抢单说明') }}</div>
-        <div class="content" v-html="content">
+<!--      <div class="instructions-box">-->
+<!--        <div class="title">{{ $t('点赞说明') }}：</div>-->
+<!--        <div class="content" v-html="content">-->
+<!--        </div>-->
+<!--      </div>-->
+    </div>
+    <van-dialog v-model="visible" :show-confirm-button="false">
+      <div class="dialog-container">
+        <div class="title">{{ $t('支付押金') }}</div>
+        <div class="money">USDT {{ recharge }}</div>
+        <div class="text-wrap">
+          <div class="text">{{ $t('支付方式：余额') }}</div>
+          <div class="text">{{ $t('押金说明：随时可提' )}}</div>
+        </div>
+        <div class="btn-wrap">
+          <van-button @click="handleCancel">{{ $t('取消') }}</van-button>
+          <van-button @click="handleConfirm">{{ $t('确认') }}</van-button>
         </div>
       </div>
-    </div>
-    <result-dialog :visible.sync="showResult" :result="$t('抢单成功')" :btn="false" :desc="$t('正在跳转页面...')"></result-dialog>
+    </van-dialog>
+    <result-dialog :visible.sync="showResult" :result="$t('获取任务成功')" :btn="false" :desc="$t('正在跳转页面...')"></result-dialog>
+    <result-dialog :visible.sync="showDepositResult" :result="$t('押金支付成功')" :btn="true"></result-dialog>
   </div>
 </template>
 
@@ -32,17 +61,17 @@ export default {
     const infoList = [
       {
         id: 1,
-        title: this.$t('今日抢单数'),
+        title: this.$t('点赞任务数'),
         value: '0'
       },
       {
         id: 2,
-        title: this.$t('今日任务次数'),
+        title: this.$t('剩余任务数'),
         value: '0'
       },
       {
         id: 3,
-        title: this.$t('今日已抢佣金'),
+        title: this.$t('今日已赚佣金'),
         value: '0.00'
       },
       {
@@ -56,7 +85,9 @@ export default {
       content: '',
       showResult: false,
       loading: false,
-      goods: {}
+      goods: {},
+      visible: false,
+      showDepositResult: false
     }
   },
   computed: {
@@ -64,23 +95,49 @@ export default {
       return this.$route.query.id
     },
     title() {
-      return this.$route.query.title || this.$t('抢单')
+      return this.$route.query.title || this.$t('获取任务')
+    },
+    img () {
+      return this.$route.query.img
+    },
+    recharge () {
+      return this.$route.query.recharge
+    },
+    open () {
+      return this.$route.query.open
     }
   },
   created() {
     this.profile()
-    this.grabOrderRule()
+    // this.grabOrderRule()
+    this.cateItem()
   },
   methods: {
+    async cateItem () {
+      try {
+        this.loading = true
+        const params = { cate: this.id }
+        const resp = await this.$api.hall.cateItem(params);
+        if (resp.code === 1) {
+          const data = resp.data
+          this.infoList[0].value = data.todayTask
+          this.infoList[1].value = data.allTask - data.todayTask
+        } else {
+          this.$toast.fail(resp.msg || resp.message)
+        }
+      } catch (e) {
+        this.$toast.fail(this.$t('发生错误'));
+      } finally {
+        this.loading = false
+      }
+    },
     async profile () {
       try {
         this.loading = true
         const resp = await this.$api.home.profile();
         if (resp.code === 1) {
           const data = resp.data
-          this.infoList[0].value = data.deal_count
-          this.infoList[1].value = data.task
-          this.infoList[2].value = data.today_unsettled
+          this.infoList[2].value = data.today_settled
           this.infoList[3].value = data.balance
         } else {
           this.$toast.fail(resp.msg || resp.message)
@@ -91,24 +148,24 @@ export default {
         this.loading = false
       }
     },
-    async grabOrderRule () {
-      try {
-        this.loading = true
-        const resp = await this.$api.hall.grabOrderRule();
-        if (resp.code === 1) {
-          const data = resp.data
-          this.content = data.detail
-        } else {
-          this.$toast.fail(resp.msg || resp.message)
-        }
-      } catch (e) {
-        this.$toast.fail(this.$t('发生错误'));
-      } finally {
-        this.loading = false
-      }
-    },
+    // async grabOrderRule () {
+    //   try {
+    //     this.loading = true
+    //     const resp = await this.$api.hall.grabOrderRule();
+    //     if (resp.code === 1) {
+    //       const data = resp.data
+    //       this.content = data.detail
+    //     } else {
+    //       this.$toast.fail(resp.msg || resp.message)
+    //     }
+    //   } catch (e) {
+    //     this.$toast.fail(this.$t('发生错误'));
+    //   } finally {
+    //     this.loading = false
+    //   }
+    // },
     handleGrabOrder() {
-      this.$toast.loading(this.$t('正在抢单'))
+      this.$toast.loading(this.$t('正在获取任务'))
       setTimeout(() => {
         // this.showResult = true
         // this.$utils.delayPush('commitOrder', '提交订单', {
@@ -125,25 +182,8 @@ export default {
         if (resp.code === 1) {
           this.showResult = true
           this.$utils.delayPush('commitOrder', '提交订单', {
-            address: resp.data.address,
             info: resp.data.info
           })
-          // this.address = resp.data.address
-          // const data = resp.data.info
-          // this.id = data.id
-          // this.goodsPic =  'http://47.242.37.172' + data.goods_pic
-          // this.goodsName = data.goods_name
-          // this.goodsPrice = data.goods_price
-          // this.cellList[0].value = data.cate
-          // this.cellList[1].value = data.rate + '%'
-          // this.cellList[2].value = '$ ' + data.balance
-          // this.cellList[3].value = data.count
-          // this.cellList[4].value = '$ ' + data.profit
-          // this.cellList[5].value = '$ ' + data.today_unsettled
-          // this.cellList[6].value = '$ ' + data.today_unsettled
-          // this.cellList[7].value = data.deal_count + '/' + data.total_task
-          // this.value = data.deal_count
-          // this.max = data.total_task
         } else {
           this.$toast.fail(resp.msg || resp.message)
         }
@@ -166,15 +206,87 @@ export default {
         this.$toast.fail(this.$t('发生错误'));
       }
     },
+    handleToMoneyRule () {
+      this.$router.push({
+        name: 'moneyRule',
+        label: '押金规则',
+        query: {
+          id: this.id
+        }
+      })
+    },
+    handleDepositMoney () {
+      // this.visible = true
+      this.$router.push({
+        name: 'payDeposit',
+        label: '缴纳押金'
+      })
+    },
+    handleCancel() {
+      this.visible = false
+    },
+    async handleConfirm() {
+      try {
+        const params = {cate: this.id}
+        const resp = await this.$api.hall.subscribe(params);
+        if (resp.code === 1) {
+          this.visible = false
+          this.showDepositResult = true
+        } else {
+          this.$toast.fail(resp.msg || resp.message)
+        }
+      } catch (e) {
+        this.$toast.fail(this.$t('发生错误'));
+      }
+    },
   },
 }
 </script>
 
 <style scoped lang="less">
+.money-rule {
+  font-family: PingFang-SC-Medium;
+  text-decoration: underline;
+  font-size: 12px;
+  font-weight: normal;
+  font-stretch: normal;
+  letter-spacing: 0px;
+  color: #666666;
+}
 .container {
   padding: 20px 15px;
   height: calc(100% - 50px);
   overflow: auto;
+  .brand-info-box {
+    display: flex;
+    margin-bottom: 20px;
+    padding: 0 20px;
+    align-items: center;
+    .van-image {
+      width: 65px;
+      height: 65px;
+      margin-right: 20px;
+    }
+    .right-wrap {
+      flex: 1;
+      .price {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        .van-button {
+          padding: 0 10px;
+          height: 20px;
+          line-height: 20px;
+          border-radius: 5px;
+          background: #fc6324;
+          border-color: #fc6324;
+          color: #ffffff;
+          font-size: 12px;
+        }
+      }
+    }
+  }
   .info-box {
     height: 160px;
     background: url("../../../assets/hall/grab-order-bk.png") no-repeat center/cover;
@@ -184,6 +296,7 @@ export default {
     flex-wrap: wrap;
     align-content: space-between;
     margin-bottom: 30px;
+    border-radius: 10px;
     .info-item {
       text-align: center;
       min-width: 90px;
@@ -237,6 +350,69 @@ export default {
     color: #999999;
     .title {
       margin-bottom: 15px;
+    }
+  }
+}
+
+.dialog-container {
+  width: 325px;
+  height: 277px;
+  background-color: #ffffff;
+  border-radius: 10px;
+  padding: 17px 20px;
+  text-align: center;
+
+  .title {
+    font-family: PingFang-SC-Bold;
+    font-family: PingFang-SC-Bold;
+    font-size: 18px;
+    font-weight: normal;
+    font-stretch: normal;
+    letter-spacing: 0px;
+    color: #333333;
+    line-height: 18px;
+    margin-bottom: 45px;
+  }
+
+  .money {
+    font-family: PingFang-SC-Bold;
+    font-size: 27px;
+    font-weight: normal;
+    font-stretch: normal;
+    letter-spacing: 0px;
+    color: #ff6c1e;
+    line-height: 27px;
+    margin-bottom: 45px;
+  }
+
+  .text-wrap {
+    font-family: PingFang-SC-Medium;
+    font-size: 12px;
+    font-weight: normal;
+    font-stretch: normal;
+    letter-spacing: 0px;
+    color: #666666;
+    text-align: left;
+    margin-bottom: 20px;
+    line-height: 20px;
+  }
+
+  .btn-wrap {
+    display: flex;
+    justify-content: space-between;
+
+    .van-button {
+      width: 135px;
+      height: 50px;
+      background-color: #ff6c1e;
+      border-color: #ff6c1e;
+      border-radius: 10px;
+      font-family: PingFang-SC-Bold;
+      font-size: 18px;
+      font-weight: normal;
+      font-stretch: normal;
+      letter-spacing: 0px;
+      color: #ffffff;
     }
   }
 }

@@ -69,4 +69,39 @@ export default [
         label: '修改用户名',
         component: () => import('./components/update-name')
     },
+    {
+        path: 'deposit-record',
+        fullPath: '/mine/deposit-record',
+        name: 'depositRecord',
+        label: '押金记录',
+        component: () => import('./components/deposit-record')
+    },
+    {
+        path: 'deposit-manage',
+        fullPath: '/mine/deposit-manage',
+        name: 'depositManage',
+        label: '押金管理',
+        component: () => import('./components/deposit-manage')
+    },
+    {
+        path: 'vip-introduce',
+        fullPath: '/mine/vip-introduce',
+        name: 'vipIntroduce',
+        label: 'vip介绍',
+        component: () => import('./components/vip-introduce')
+    },
+    {
+        path: 'pay-deposit',
+        fullPath: '/mine/pay-deposit',
+        name: 'payDeposit',
+        label: '缴纳押金',
+        component: () => import('./components/pay-deposit')
+    },
+    {
+        path: 'withdraw-deposit',
+        fullPath: '/mine/withdraw-deposit',
+        name: 'withdrawDeposit',
+        label: '提取押金',
+        component: () => import('./components/withdraw-deposit')
+    },
 ]

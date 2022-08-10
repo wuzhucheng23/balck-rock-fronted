@@ -2,7 +2,12 @@
   <div class="index sub-page">
     <div class="container">
       <div class="title-box">
-        <van-image :src="require('@/assets/login/logo-text.png')"></van-image>
+        <div>
+          <van-image :src="require('@/assets/login/logo.png')" class="logo-img"></van-image>
+        </div>
+        <div>
+          <van-image :src="require('@/assets/login/logo-text.png')" class="logo-text-img"></van-image>
+        </div>
       </div>
       <div class="field-box">
         <div class="field-item">
@@ -14,6 +19,19 @@
             <van-field v-model="username" :placeholder="$t('请输入邮箱')" type="text"></van-field>
           </div>
         </div>
+<!--        <div class="field-item">-->
+<!--          <div class="field-title">-->
+<!--            <van-image :src="require('@/assets/login/name-icon.png')"></van-image>-->
+<!--            <span>{{ $t('电话号码') }}</span>-->
+<!--          </div>-->
+<!--          <div class="field-value">-->
+<!--            <van-field v-model="phone" :placeholder="$t('请输入电话号码')" type="text">-->
+<!--              <template #label>-->
+<!--                <span @click="handleShowCode" class="label-code">+{{ areaCode }}</span>-->
+<!--              </template>-->
+<!--            </van-field>-->
+<!--          </div>-->
+<!--        </div>-->
         <div class="field-item">
           <div class="field-title">
             <van-image :src="require('@/assets/login/password-icon.png')"></van-image>
@@ -40,9 +58,22 @@
         <van-button block class="register" @click="handleToRegister">
           <span>{{ $t('注册账号') }}</span>
         </van-button>
+        <div class="oneline-service" @click="handleToService">{{ $t('在线客服') }}</div>
       </div>
     </div>
     <result-dialog :visible.sync="visible" :result="$t('登陆成功')" :btn="false" :desc="$t('正在跳转页面...')"></result-dialog>
+    <van-popup v-model="visiblePopup" round position="bottom">
+      <van-picker
+          show-toolbar
+          :columns="columns"
+          :default-index="defaultIndex"
+          :loading="initLoading"
+          :confirm-button-text="$t('确定')"
+          :cancel-button-text="$t('取消')"
+          @cancel="handleCancel"
+          @confirm="handleConfirm"
+      />
+    </van-popup>
   </div>
 </template>
 
@@ -54,8 +85,20 @@ export default {
       username: '',
       password: '',
       loading: false,
-      visible: false
+      visible: false,
+      serviceList: [],
+      visiblePopup: false,
+      columns: [],
+      areaCodeList: [],
+      defaultIndex: 0,
+      initLoading: false,
+      areaCode: '',
+      phone: '',
     }
+  },
+  created() {
+    // this.getAreaCode()
+    this.getCustomer()
   },
   methods: {
     handleToLanguage() {
@@ -76,11 +119,31 @@ export default {
         label: '忘记密码'
       })
     },
+    async getAreaCode () {
+      try {
+        // this.loading = true
+        const resp = await this.$api.login.getAreaCode();
+        if (resp.code === 1) {
+          const data = resp.data
+          this.areaCodeList = data
+          this.columns = data.map(item => item.area_code)
+          if (data.length > 0) this.areaCode = data[0].area_code
+        } else {
+          this.$toast.fail(resp.msg || resp.message)
+        }
+      } catch (e) {
+        this.$toast.fail(this.$t('发生错误'));
+      } finally {
+        // this.loading = false
+      }
+    },
     async handleLogin() {
-      if (!this.username) return this.$toast(this.$t('Please enter mobile username'));
-      if (!this.password) return this.$toast(this.$t('Please enter password'));
+      // if (!this.phone) return this.$toast(this.$t('请输入电话号码'));
+      if (!this.username) return this.$toast(this.$t('请输入邮箱'));
+      if (!this.password) return this.$toast(this.$t('请输入密码'));
       this.loading = true;
       const params = {
+        // tel: this.areaCode + this.phone,
         tel: this.username,
         pwd: this.password,
       }
@@ -90,7 +153,7 @@ export default {
           // this.$toast.success(res.msg)
           this.visible = true
           localStorage.setItem('token', 'Bearer ' + res.data.token)
-          this.$utils.delayPush('homeIndex', '首页')
+          this.$utils.delayPush('homeIndex', '首页', { visible: true })
         } else {
           this.$toast.fail(res.msg || res.message)
         }
@@ -100,13 +163,42 @@ export default {
         this.loading = false
       }
     },
+    async getCustomer() {
+      try {
+        // this.loading = true
+        const resp = await this.$api.service.getCustomer();
+        if (resp.code === 1) {
+          const data = resp.data
+          this.serviceList = data
+        } else {
+          this.$toast.fail(resp.msg || resp.message)
+        }
+      } catch (e) {
+        this.$toast.fail(this.$t('发生错误'));
+      } finally {
+        // this.loading = false
+      }
+    },
+    handleToService () {
+      window.location.href = this.serviceList.find(item => item.username === '在线服务').url
+    },
+    handleShowCode () {
+      this.visiblePopup = true
+    },
+    handleCancel () {
+      this.visiblePopup = false;
+    },
+    handleConfirm (value) {
+      this.areaCode = value
+      this.handleCancel();
+    },
   },
 }
 </script>
 
 <style scoped lang="less">
 .container {
-  height: 100vh;
+  height: 100%;
   overflow: auto;
   padding-top: 102px;
   background: url("../../../assets/login/login-bk.png") no-repeat center/cover;
@@ -116,9 +208,14 @@ export default {
   .title-box {
     text-align: center;
     margin-bottom: 48px;
-    .van-image {
-      width: 166px;
-      height: 132px;
+    .logo-img {
+      width: 88px;
+      height: 88px;
+      margin-bottom: 15px;
+    }
+    .logo-text-img {
+      width: 142px;
+      height: 24px;
     }
   }
   .field-box {
@@ -216,6 +313,33 @@ export default {
       border-color: #ffffff;
       color: #ff6c1e;
     }
+    .oneline-service {
+      text-align: center;
+      font-family: PingFang-SC-Regular;
+      font-size: 12px;
+      font-weight: normal;
+      font-stretch: normal;
+      line-height: 16px;
+      letter-spacing: 0px;
+      color: #f7dbae;
+    }
   }
+}
+
+::v-deep .van-loading--spinner {
+  position: relative;
+  top: -1px;
+  margin-right: 6px;
+}
+
+::v-deep .van-popup--bottom {
+  border-radius: 10px 10px 0 0;
+}
+
+::v-deep .van-field__label {
+  color: #fff;
+  font-size: 18px;
+  width: unset;
+  margin-right: 16px;
 }
 </style>

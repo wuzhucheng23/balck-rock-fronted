@@ -5,7 +5,7 @@
       <div class="nav-box">
         <van-tabs v-model="level" color="#fc6324" line-width="20px" title-active-color="#fc6324"
                   title-inactive-color="#666" @change="handleChange">
-          <van-tab v-for="item in levelList" :key="item.value" :title="item.title" :name="item.value"></van-tab>
+          <van-tab v-for="item in levelList" :key="item.value" :title="item.title + '（' + item.people + '）'" :name="item.value"></van-tab>
         </van-tabs>
       </div>
       <div class="content-box">
@@ -15,12 +15,17 @@
                   @load="getDetails">
           <div class="content-item" v-for="item in contentList" :key="item.id">
             <div class="left-wrap">
-              <div class="name">{{ item.username }}</div>
-              <div class="id">ID:{{ item.id }}</div>
+              <div class="vip-wrap">VIP{{ item.level }}</div>
+              <div class="info-wrap">
+                <div class="name">{{ item.username }}</div>
+                <div class="id">ID:{{ item.id }}</div>
+                <div class="time">{{ item.addtime }}</div>
+              </div>
             </div>
             <div class="right-wrap">
               <div class="money">{{ $t('余额') }}：<span>{{ item.balance }}</span></div>
-              <div class="time">{{ item.addtime }}</div>
+              <div class="all-earn">{{ $t('总佣金') }}：<span>{{ item.commission }}</span></div>
+              <div class="today-earn">{{ $t('今日佣金') }}：<span>{{ item.today_settled }}</span></div>
             </div>
           </div>
         </van-list>
@@ -37,15 +42,17 @@ export default {
       {
         title: this.$t('一级'),
         value: 1,
+        people: 0,
       },
       {
-        title: this.$t('二级'),
+        title: this.$t('团队'),
         value: 2,
+        people: 0,
       },
-      {
-        title: this.$t('三级'),
-        value: 3,
-      },
+      // {
+      //   title: this.$t('三级'),
+      //   value: 3,
+      // },
     ]
     return {
       levelList,
@@ -62,6 +69,9 @@ export default {
       return this.empty && !this.loading
     }
   },
+  created() {
+    this.userCount()
+  },
   methods: {
     handleChange(value) {
       this.level = value
@@ -69,6 +79,23 @@ export default {
       this.page = 1
       this.finished = false
       this.getDetails()
+    },
+    async userCount () {
+      try {
+        this.loading = true
+        const resp = await this.$api.home.userCount();
+        if (resp.code === 1) {
+          const data = resp.data
+          this.levelList[0].people = data.oneLevel
+          this.levelList[1].people = data.teamAll
+        } else {
+          this.$toast.fail(resp.msg || resp.message)
+        }
+      } catch (e) {
+        this.$toast.fail(this.$t('发生错误'));
+      } finally {
+        this.loading = false
+      }
     },
     async getDetails() {
       const params = {
@@ -101,20 +128,40 @@ export default {
 
 <style scoped lang="less">
 .container {
+  height: calc(100% - 50px);
+  overflow: auto;
   padding-top: 1px;
   .nav-box {
     margin-bottom: 5px;
   }
   .content-box {
+    height: calc(100% - 50px);
+    overflow: auto;
     .content-item {
-      height: 63px;
+      height: 81px;
       background-color: #ffffff;
       margin-bottom: 1px;
       padding: 16px 20px;
       display: flex;
       justify-content: space-between;
+      .left-wrap {
+        display: flex;align-items: center;
+        .vip-wrap {
+          width: 36px;
+          height: 36px;
+          background: #fc6324;
+          font-family: PingFang-SC-Medium;
+          font-size: 12px;
+          color: #ffffff;
+          text-align: center;
+          line-height: 36px;
+          border-radius: 50%;
+          margin-right: 10px;
+        }
+      }
     }
     .name {
+      max-width: 120px;
       font-family: PingFang-SC-Bold;
       font-size: 16px;
       font-weight: normal;
@@ -123,6 +170,9 @@ export default {
       letter-spacing: 0px;
       color: #333333;
       margin-bottom: 6px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     .id {
       font-family: PingFang-SC-Medium;
@@ -130,6 +180,17 @@ export default {
       font-weight: normal;
       font-stretch: normal;
       letter-spacing: 0px;
+      color: #999999;
+      line-height: 12px;
+      margin-bottom: 6px;
+    }
+    .time {
+      font-family: PingFang-SC-Medium;
+      font-size: 12px;
+      font-weight: normal;
+      font-stretch: normal;
+      letter-spacing: 0px;
+      line-height: 12px;
       color: #999999;
     }
     .money {
@@ -152,14 +213,26 @@ export default {
         color: #f57e0a;
       }
     }
-    .time {
+    .today-earn, .all-earn {
       font-family: PingFang-SC-Medium;
       font-size: 12px;
       font-weight: normal;
       font-stretch: normal;
+      line-height: 12px;
       letter-spacing: 0px;
-      color: #cccccc;
+      color: #666666;
+      margin-bottom: 6px;
       text-align: right;
+      margin-bottom: 6px;
+      span {
+        font-family: PingFang-SC-Medium;
+        font-size: 12px;
+        font-weight: normal;
+        font-stretch: normal;
+        line-height: 12px;
+        letter-spacing: 0px;
+        color: #f57e0a;
+      }
     }
   }
 }

@@ -2,12 +2,12 @@
   <div class="index main-page">
     <div class="container">
       <div class="info-box">
-        <div class="people-info" @click="handleUpdateName">
-          <van-image :src="require('@/assets/mine/people-img.png')" class="headpic"></van-image>
+        <div class="people-info" @click="handleToVipIntroduce">
+          <van-image :src="headpic" class="headpic"></van-image>
           <div class="right-wrap">
             <div class="name">{{ username }}</div>
 <!--            <div class="code" @click="handleCopy">+<span ref="code">{{ phone }}</span></div>-->
-            <div class="code"><span ref="code">{{ phone }}</span></div>
+<!--            <div class="code"><span ref="code">{{ phone }}</span></div>-->
           </div>
         </div>
         <div class="uid-more">
@@ -17,7 +17,7 @@
         <div class="money-integral">
           <div class="money-wrap">
             <div class="title">{{ $t('余额') }}</div>
-            <div class="value">R${{ balance }}</div>
+            <div class="value">${{ balance }}</div>
           </div>
           <div class="integral-wrap">
             <div class="title">{{ $t('未完成任务') }}</div>
@@ -44,23 +44,36 @@
             </van-grid-item>
           </van-grid>
         </div>
-        <div class="bottom-box">
-          <van-grid
-              clickable
-              :column-num="4"
-              icon-size="33px">
-            <van-grid-item
-                v-for="item in bottomGridList"
-                :key="item.title"
-                :icon="item.icon"
-                @click="handleToOrder(item)">
-              <template #text>
-                <div class="title">{{ item.title }}</div>
-                <div class="value">{{ item.value }}</div>
-              </template>
-            </van-grid-item>
-          </van-grid>
-        </div>
+<!--        <div class="bottom-box">-->
+<!--          <van-grid-->
+<!--              :column-num="3"-->
+<!--              icon-size="33px">-->
+<!--            <van-grid-item-->
+<!--                v-for="item in bottomGridList"-->
+<!--                :key="item.title"-->
+<!--                :icon="item.icon"-->
+<!--                @click="handleToOrder(item)">-->
+<!--              <template #text>-->
+<!--                <div class="title">{{ item.title }}</div>-->
+<!--                <div class="value">{{ item.value }}</div>-->
+<!--              </template>-->
+<!--            </van-grid-item>-->
+<!--          </van-grid>-->
+<!--        </div>-->
+      </div>
+      <div class="operation-box">
+        <van-grid
+            clickable
+            :column-num="4"
+            icon-size="44px"
+            :border="false">
+          <van-grid-item
+              v-for="item in gridList"
+              :key="item.text"
+              :icon="item.icon"
+              :text="item.text"
+              @click="handleToRoute(item)"/>
+        </van-grid>
       </div>
       <div class="mine-box">
         <div class="top-box">
@@ -72,15 +85,15 @@
               is-link
               @click="handleToRoute(item)"/>
         </div>
-        <div class="bottom-box">
-          <van-cell
-              v-for="item in bottomCellList"
-              :key="item.title"
-              :icon="item.icon"
-              :title="item.title"
-              is-link
-              @click="handleToRoute(item)"/>
-        </div>
+<!--        <div class="bottom-box">-->
+<!--          <van-cell-->
+<!--              v-for="item in bottomCellList"-->
+<!--              :key="item.title"-->
+<!--              :icon="item.icon"-->
+<!--              :title="item.title"-->
+<!--              is-link-->
+<!--              @click="handleToRoute(item)"/>-->
+<!--        </div>-->
       </div>
       <div class="btn-box">
         <van-button block @click="handleLogout">{{ $t('退出登陆') }}</van-button>
@@ -95,94 +108,198 @@ export default {
   data() {
     const topGridList = [
       {
-        icon: require('@/assets/mine/robot-icon.png'),
-        title: this.$t('机器人'),
+        icon: require('@/assets/mine/team-people.png'),
+        title: this.$t('团队人数'),
         value: '$0.00',
       },
       {
-        icon: require('@/assets/mine/car-icon.png'),
-        title: this.$t('手动的'),
+        icon: require('@/assets/mine/yestoday-add-icon.png'),
+        title: this.$t('昨日新增'),
         value: '$0.00',
       },
       {
-        icon: require('@/assets/mine/auto-icon.png'),
-        title: this.$t('自动的'),
+        icon: require('@/assets/mine/today-add-icon.png'),
+        title: this.$t('今日新增'),
+        value: '$0.00',
+      },
+      {
+        icon: require('@/assets/mine/order-icon.png'),
+        title: this.$t('任务收益'),
+        value: '$0.00',
+        name: 'orderRecode',
+        label: '订单记录'
+      },
+      {
+        icon: require('@/assets/mine/team-earn-icon.png'),
+        title: this.$t('团队返佣'),
+        value: '$0.00',
+      },
+      {
+        icon: require('@/assets/mine/sum-icon.png'),
+        title: this.$t('总收益'),
         value: '$0.00',
       },
     ]
     const bottomGridList = [
       {
         icon: require('@/assets/mine/order-icon.png'),
-        title: this.$t('订单'),
+        title: this.$t('任务收益'),
         value: '$0.00',
         name: 'orderRecode',
         label: '订单记录'
       },
-      {
-        icon: require('@/assets/mine/earn-icon.png'),
-        title: this.$t('收益'),
-        value: '$0.00',
-      },
+      // {
+      //   icon: require('@/assets/mine/earn-icon.png'),
+      //   title: this.$t('收益'),
+      //   value: '$0.00',
+      // },
       {
         icon: require('@/assets/mine/team-earn-icon.png'),
-        title: this.$t('团队收益'),
+        title: this.$t('团队返佣'),
         value: '$0.00',
       },
       {
         icon: require('@/assets/mine/sum-icon.png'),
-        title: this.$t('总额'),
+        title: this.$t('总收益'),
         value: '$0.00',
       },
     ]
-    const topCellList = [
+    const gridList = [
       {
-        icon: require('@/assets/mine/invite-friend.png'),
-        title: this.$t('邀请好友'),
-        name: 'inviteFriend',
-        label: '邀请好友',
+        icon: require('@/assets/home/recharge-icon.png'),
+        text: this.$t('充值'),
+        name: 'recharge',
+        label: '充值'
       },
       {
-        icon: require('@/assets/mine/my-team.png'),
-        title: this.$t('我的团队'),
+        icon: require('@/assets/home/withdraw-icon.png'),
+        text: this.$t('提现'),
+        name: 'withdraw',
+        label: '提现'
+      },
+      {
+        icon: require('@/assets/home/wallet-icon.png'),
+        text: this.$t('钱包'),
+        name: 'wallet',
+        label: '钱包'
+      },
+      {
+        icon: require('@/assets/home/invitation-icon.png'),
+        text: this.$t('邀请'),
+        name: 'inviteFriend',
+        label: '邀请好友'
+      },
+      {
+        icon: require('@/assets/home/team-icon.png'),
+        text: this.$t('团队'),
         name: 'myTeam',
-        label: '我的团队',
+        label: '团队'
+      },
+      {
+        icon: require('@/assets/home/introduction-icon.png'),
+        text: this.$t('简介'),
+        name: 'introduction',
+        label: '简介'
+      },
+      {
+        icon: require('@/assets/home/help-icon.png'),
+        text: this.$t('帮助'),
+        name: 'help',
+        label: '帮助'
+      },
+      {
+        icon: require('@/assets/home/activity-icon.png'),
+        text: this.$t('活动'),
+        name: 'activity',
+        label: '活动'
+      }
+    ]
+    const topCellList = [
+      // {
+      //   icon: require('@/assets/mine/invite-friend.png'),
+      //   title: this.$t('邀请好友'),
+      //   name: 'inviteFriend',
+      //   label: '邀请好友',
+      // },
+      // {
+      //   icon: require('@/assets/mine/my-team.png'),
+      //   title: this.$t('我的团队'),
+      //   name: 'myTeam',
+      //   label: '我的团队',
+      // },
+      {
+        icon: require('@/assets/mine/my-team.png'),
+        title: this.$t('任务助手'),
+        name: 'hallIndex',
+        label: '任务助手'
+      },
+      {
+        icon: require('@/assets/mine/deposit-record.png'),
+        title: this.$t('押金管理'),
+        name: 'depositManage',
+        label: '押金管理'
+      },
+      {
+        icon: require('@/assets/mine/order-record.png'),
+        title: this.$t('订单记录'),
+        name: 'orderRecode',
+        label: '订单记录'
       },
       {
         icon: require('@/assets/mine/earning-recode.png'),
-        title: this.$t('收益记录'),
+        title: this.$t('帐变记录'),
         name: 'earningRecode',
         label: '收益记录'
       },
-    ]
-    const bottomCellList = [
-      {
-        icon: require('@/assets/mine/card-icon.png'),
-        title: this.$t('银行账户'),
-        name: 'bankAccount',
-        label: '银行账户'
-      },
-      {
-        icon: require('@/assets/mine/address-icon.png'),
-        title: this.$t('收货地址'),
-        name: 'shippingAddress',
-        label: '收货地址'
-      },
-      {
-        icon: require('@/assets/mine/people-certification.png'),
-        title: this.$t('个人认证'),
-        name: 'personalCertificate',
-        label: '个人认证'
-      },
       {
         icon: require('@/assets/mine/set-icon.png'),
-        title: this.$t('设置'),
+        title: this.$t('相关设置'),
         name: 'settingUp',
         label: '设置'
       },
     ]
+    const bottomCellList = [
+      // {
+      //   icon: require('@/assets/mine/card-icon.png'),
+      //   title: this.$t('银行账户'),
+      //   name: 'bankAccount',
+      //   label: '银行账户'
+      // },
+      // {
+      //   icon: require('@/assets/mine/address-icon.png'),
+      //   title: this.$t('收货地址'),
+      //   name: 'shippingAddress',
+      //   label: '收货地址'
+      // },
+      // {
+      //   icon: require('@/assets/mine/people-certification.png'),
+      //   title: this.$t('个人认证'),
+      //   name: 'personalCertificate',
+      //   label: '个人认证'
+      // },
+      // {
+      //   icon: require('@/assets/mine/deposit-record.png'),
+      //   title: this.$t('押金记录'),
+      //   name: 'depositRecord',
+      //   label: '押金记录'
+      // },
+      // {
+      //   icon: require('@/assets/mine/deposit-record.png'),
+      //   title: this.$t('押金管理'),
+      //   name: 'depositManage',
+      //   label: '押金管理'
+      // },
+      // {
+      //   icon: require('@/assets/mine/set-icon.png'),
+      //   title: this.$t('相关设置'),
+      //   name: 'settingUp',
+      //   label: '设置'
+      // },
+    ]
     return {
       topGridList,
       bottomGridList,
+      gridList,
       topCellList,
       bottomCellList,
       username: '',
@@ -217,10 +334,10 @@ export default {
         })
       }
     },
-    handleUpdateName () {
+    handleToVipIntroduce () {
       this.$router.push({
-        name: 'updateName',
-        label: '修改用户名'
+        name: 'vipIntroduce',
+        label: 'vip介绍'
       })
     },
     handleLogout() {
@@ -257,13 +374,16 @@ export default {
         const resp = await this.$api.mine.userCount();
         if (resp.code === 1) {
           const data = resp.data
-          this.topGridList[0].value = data.robot_balance
-          this.topGridList[1].value = data.manual
-          this.topGridList[2].value = data.auto
-          this.bottomGridList[0].value = data.order_profit
-          this.bottomGridList[1].value = data.robot_profit
-          this.bottomGridList[2].value = data.team_profit
-          this.bottomGridList[3].value = data.total
+          this.topGridList[0].value = data.teamAll
+          this.topGridList[1].value = data.teamYes
+          this.topGridList[2].value = data.teamToday
+          this.topGridList[3].value = data.order_profit
+          this.topGridList[4].value = data.team_profit
+          this.topGridList[5].value = data.total
+          // this.bottomGridList[0].value = data.order_profit
+          // this.bottomGridList[1].value = data.robot_profit
+          // this.bottomGridList[2].value = data.team_profit
+          // this.bottomGridList[3].value = data.total
         } else {
           this.$toast.fail(resp.msg || resp.message)
         }
@@ -336,14 +456,13 @@ export default {
 
       .right-wrap {
         .name {
-          margin: 11px 0;
           font-family: PingFang-SC-Bold;
           font-size: 12px;
           font-weight: normal;
           font-stretch: normal;
           letter-spacing: 0px;
           color: #201711;
-          line-height: 12px;
+          line-height: 55px;
         }
 
         .code {
@@ -500,6 +619,29 @@ export default {
 
     .top-box {
       margin-bottom: 12px;
+    }
+  }
+
+  .operation-box {
+    padding: 0 15px;
+    margin-bottom: 12px;
+    border-radius: 5px;
+    overflow: hidden;
+    ::v-deep .van-grid-item__icon img{
+      width: 54px;
+      height: 54px;
+    }
+    ::v-deep .van-grid-item__text {
+      font-family: PingFang-SC-Bold;
+      font-size: 12px;
+      font-weight: normal;
+      font-stretch: normal;
+      letter-spacing: 0px;
+      color: #333333;
+      text-align: center;
+    }
+    ::v-deep .van-grid-item__content {
+      padding: 16px 6px;
     }
   }
 

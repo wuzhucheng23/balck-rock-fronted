@@ -24,7 +24,7 @@
           <div class="right-wrap">
             <div class="right-wrap">
               <div class="status">{{ item.status }}</div>
-              <div class="money">R${{ item.goods_price }}</div>
+              <div class="money">${{ item.goods_price }}</div>
             </div>
           </div>
         </div>
@@ -104,6 +104,7 @@ export default {
         .right-wrap {
           text-align: left;
           .time {
+            white-space: nowrap;
             font-family: PingFang-SC-Medium;
             font-size: 12px;
             font-weight: normal;
@@ -121,6 +122,7 @@ export default {
             letter-spacing: 0px;
             color: #333333;
             line-height: 12px;
+            white-space: nowrap;
           }
         }
       }

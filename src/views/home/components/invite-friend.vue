@@ -259,9 +259,10 @@ export default {
       text-align: center;
 
       .van-button {
-        width: 115px;
+        //width: 115px;
         height: 34px;
         background-color: #fc6324;
+        border-color: #fc6324;
         border-radius: 10px;
         font-family: PingFang-SC-Medium;
         font-size: 12px;

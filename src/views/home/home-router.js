@@ -103,5 +103,40 @@ export default [
         name: 'activityDetail',
         label: '活动详情',
         component: () => import('./components/activity-detail')
+    },
+    {
+        path: 'lottery',
+        fullPath: '/home/lottery',
+        name: 'lottery',
+        label: '抽奖',
+        component: () => import('./components/lottery')
+    },
+    {
+        path: 'lottery-rules',
+        fullPath: '/home/lottery-rules',
+        name: 'lotteryRules',
+        label: '抽奖规则',
+        component: () => import('./components/lottery-rules')
+    },
+    {
+        path: 'sign-in',
+        fullPath: '/home/sign-in',
+        name: 'signIn',
+        label: '签到',
+        component: () => import('./components/sign-in')
+    },
+    {
+        path: 'sign-in-rules',
+        fullPath: '/home/sign-in-rules',
+        name: 'signInRules',
+        label: '签到规则',
+        component: () => import('./components/sign-in-rules')
+    },
+    {
+        path: 'problem-detail',
+        fullPath: '/home/problem-detail',
+        name: 'problemDetail',
+        label: '问题详情',
+        component: () => import('./components/problem-detail')
     }
 ]

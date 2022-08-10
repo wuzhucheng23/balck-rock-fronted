@@ -21,17 +21,21 @@
         <div class="title">{{ $t('请上传交易截图') }}</div>
         <van-uploader :after-read="handleUpload" v-model="fileList" :max-count="1" @click="handleDelete"/>
       </div>
+      <div class="bottom-box">
+        <div class="title">{{ $t('哈希码') }}</div>
+        <van-field v-model="hashCode" type="textarea" :placeholder="$t('请输入哈希码')" :rows="3"></van-field>
+      </div>
       <div class="confirm-btn">
         <van-button block @click="handleDeposit" :loading="buttonLoading"
                     loading-type="spinner" :loading-text="$t('正在存款...')">{{ $t('确认') }}
         </van-button>
       </div>
-      <div class="tip-box">
-        <div class="title">{{ $t('提示') }}:</div>
-        <div class="content">
-          <div class="detail" v-html="instructions"></div>
-        </div>
-      </div>
+<!--      <div class="tip-box">-->
+<!--        <div class="title">{{ $t('提示') }}:</div>-->
+<!--        <div class="content">-->
+<!--          <div class="detail" v-html="instructions"></div>-->
+<!--        </div>-->
+<!--      </div>-->
     </div>
     <result-dialog :visible.sync="visible" :result="$t('充值成功')" :btn="false" :desc="$t('正在跳转页面...')"></result-dialog>
   </div>
@@ -44,6 +48,7 @@ export default {
     return {
       fileList: [],
       imageUrl: '',
+      hashCode: '',
       buttonLoading: false,
       instructions: '',
       visible: false
@@ -109,12 +114,14 @@ export default {
       try {
         this.buttonLoading = true
         if (!this.money) return this.$toast(this.$t('请输入充值金额'))
+        if (!this.hashCode) return this.$toast(this.$t('请输入哈希码'))
         if (this.fileList.length <= 0) return this.$toast(this.$t('请上传交易截图'))
         if (!this.imageUrl) return this.$toast(this.$t('图片上传中，请重试'))
         const params = {
           type: this.type,
           amount: +this.account,
-          proof: this.imageUrl
+          proof: this.imageUrl,
+          hashcode: this.hashCode
         }
         const res = await this.$api.home.topup(params)
         if (res.code === 1) {
@@ -202,9 +209,9 @@ export default {
 }
 
 .bottom-box {
-  height: 150px;
   padding: 15px;
   background: #fff;
+  margin-bottom: 10px;
 
   .title {
     font-size: 14px;
@@ -219,6 +226,12 @@ export default {
       height: 90px;
       border-radius: 10px;
     }
+  }
+
+  .van-field {
+    height: 90px;
+    background-color: #f6f6f6;
+    border-radius: 10px;
   }
 }
 

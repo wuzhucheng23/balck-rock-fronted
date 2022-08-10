@@ -3,6 +3,12 @@
     <nav-bar :title="$t('活动中心')"></nav-bar>
     <div class="container">
       <div class="activity-box">
+<!--        <div class="activity-item" @click="toLottery">-->
+<!--          <van-image :src="require('@/assets/home/lottery-activity-image.png')"></van-image>-->
+<!--        </div>-->
+<!--        <div class="activity-item" @click="toSignIn">-->
+<!--          <van-image :src="require('@/assets/home/sign-in-activity-image.png')"></van-image>-->
+<!--        </div>-->
         <div class="activity-item" v-for="item in activityList" :key="item.id" @click="handleToDetail(item)">
           <van-image :src="item.img"></van-image>
           <div class="text" v-html="item.title"></div>
@@ -33,6 +39,18 @@ export default {
         }
       })
     },
+    toLottery () {
+      this.$router.push({
+        name: 'lottery',
+        label: '抽奖'
+      })
+    },
+    toSignIn () {
+      this.$router.push({
+        name: 'signIn',
+        label: '签到'
+      })
+    },
     async activitys () {
       try {
         this.loading = true
@@ -55,7 +73,9 @@ export default {
 
 <style scoped lang="less">
 .container {
+  height: calc(100% - 50px);
   padding: 29px 15px 15px;
+  overflow: auto;
   .activity-box {
     .activity-item {
       position: relative;

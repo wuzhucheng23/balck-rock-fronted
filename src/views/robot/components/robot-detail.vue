@@ -18,11 +18,11 @@
           <div class="bottom-wrap">
             <div class="left">
               <div class="top-text">{{ $t('最低买入') }}</div>
-              <div class="bottom-text">R${{ robotInfo.min_num }}</div>
+              <div class="bottom-text">${{ robotInfo.min_num }}</div>
             </div>
             <div class="right">
               <div class="top-text">{{ $t('最高买入') }}</div>
-              <div class="bottom-text">R${{ robotInfo.max_num }}</div>
+              <div class="bottom-text">${{ robotInfo.max_num }}</div>
             </div>
           </div>
         </div>

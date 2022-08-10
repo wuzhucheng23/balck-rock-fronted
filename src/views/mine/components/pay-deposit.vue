@@ -1,0 +1,223 @@
+<template>
+  <div class="pay-deposit sub-page">
+    <nav-bar :title="$t('缴纳押金')"></nav-bar>
+    <div class="container">
+      <div class="pay-box">
+        <div class="pay-item" v-for="item in cateList" :key="item.id">
+          <van-image :src="item.cate_pic"></van-image>
+          <div class="right-box">
+            <div class="left-wrap">
+              <div class="deposit-text">{{ $t('押金') }}：<span>{{ item.recharge }}U</span></div>
+              <div class="earn-text">{{ $t('任务单价') }}：<span>{{ item.bili }}U</span></div>
+              <div class="number-text">{{ $t('任务次数') }}：<span>{{item.factor }}</span></div>
+            </div>
+            <div class="right-wrap">
+              <van-button @click="handlePay(item)" :disabled="item.r_status !== 0">
+                <span v-if="item.r_status === 0">{{ $t('缴纳') }}</span>
+                <span v-else>{{ $t('已完成') }}</span>
+              </van-button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <van-dialog v-model="visible" :show-confirm-button="false">
+      <div class="dialog-container">
+        <div class="title">{{ $t('支付押金') }}</div>
+        <div class="money">USDT {{ recharge }}</div>
+        <div class="text-wrap">
+          <div class="text">{{ $t('支付方式：余额') }}</div>
+          <div class="text">{{ $t('押金说明：随时可提' )}}</div>
+        </div>
+        <div class="btn-wrap">
+          <van-button @click="handleCancel">{{ $t('取消') }}</van-button>
+          <van-button @click="handleConfirm">{{ $t('确认') }}</van-button>
+        </div>
+      </div>
+    </van-dialog>
+    <result-dialog :visible.sync="showDepositResult" :result="$t('押金支付成功')" :btn="true"></result-dialog>
+  </div>
+</template>
+
+<script>
+export default {
+  name: "pay-deposit",
+  data() {
+    return {
+      cateList: [],
+      recharge: 0,
+      id: '',
+      visible: false,
+      showDepositResult: false
+    }
+  },
+  created() {
+    this.getShowContent()
+  },
+  methods: {
+    async getShowContent () {
+      try {
+        this.loading = true
+        const resp = await this.$api.home.getShowContent();
+        if (resp.code === 1) {
+          const data = resp.data
+          this.cateList = data.cate
+        } else {
+          this.$toast.fail(resp.msg || resp.message)
+        }
+      } catch (e) {
+        this.$toast.fail(this.$t('发生错误'));
+      } finally {
+        this.loading = false
+      }
+    },
+    handlePay (item) {
+      this.id = item.id
+      this.recharge = item.recharge
+      this.visible = true
+    },
+    handleCancel() {
+      this.visible = false
+    },
+    async handleConfirm() {
+      try {
+        const params = {cate: this.id}
+        const resp = await this.$api.hall.subscribe(params);
+        if (resp.code === 1) {
+          this.visible = false
+          this.showDepositResult = true
+        } else {
+          this.$toast.fail(resp.msg || resp.message)
+        }
+      } catch (e) {
+        this.$toast.fail(this.$t('发生错误'));
+      }
+    },
+  },
+
+}
+</script>
+
+<style scoped lang="less">
+.container {
+  height: calc(100% - 50px);
+  overflow: auto;
+  padding: 15px;
+  .pay-box {
+    .pay-item {
+      height: 100px;
+      background-color: #ffffff;
+      border-radius: 20px;
+      padding: 8px;
+      display: flex;
+      margin-bottom: 10px;
+      .van-image {
+        width: 84px;
+        height: 84px;
+        margin-right: 15px;
+        border-radius: 10px;
+        overflow: hidden;
+      }
+      .right-box {
+        flex: 1;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-right: 10px;
+        .left-wrap {
+          div {
+            font-family: PingFang-SC-Bold;
+            font-size: 14px;
+            font-weight: normal;
+            font-stretch: normal;
+            letter-spacing: 0px;
+            line-height: 14px;
+            color: #666666;
+            margin: 12px 0;
+            span {
+              color: #f0ae16;
+            }
+          }
+        }
+        .right-wrap {
+          .van-button {
+            width: 75px;
+            height: 30px;
+            background-color: #f9c87a;
+            border-color: #f9c87a;
+            border-radius: 15px;
+            font-family: PingFang-SC-Medium;
+            font-size: 14px;
+            font-weight: normal;
+            font-stretch: normal;
+            letter-spacing: 0px;
+            color: #1e1b1f;
+          }
+        }
+      }
+    }
+  }
+}
+.dialog-container {
+  width: 325px;
+  height: 277px;
+  background-color: #ffffff;
+  border-radius: 10px;
+  padding: 17px 20px;
+  text-align: center;
+
+  .title {
+    font-family: PingFang-SC-Bold;
+    font-family: PingFang-SC-Bold;
+    font-size: 18px;
+    font-weight: normal;
+    font-stretch: normal;
+    letter-spacing: 0px;
+    color: #333333;
+    line-height: 18px;
+    margin-bottom: 45px;
+  }
+
+  .money {
+    font-family: PingFang-SC-Bold;
+    font-size: 27px;
+    font-weight: normal;
+    font-stretch: normal;
+    letter-spacing: 0px;
+    color: #ff6c1e;
+    line-height: 27px;
+    margin-bottom: 45px;
+  }
+
+  .text-wrap {
+    font-family: PingFang-SC-Medium;
+    font-size: 12px;
+    font-weight: normal;
+    font-stretch: normal;
+    letter-spacing: 0px;
+    color: #666666;
+    text-align: left;
+    margin-bottom: 20px;
+    line-height: 20px;
+  }
+
+  .btn-wrap {
+    display: flex;
+    justify-content: space-between;
+
+    .van-button {
+      width: 135px;
+      height: 50px;
+      background-color: #ff6c1e;
+      border-color: #ff6c1e;
+      border-radius: 10px;
+      font-family: PingFang-SC-Bold;
+      font-size: 18px;
+      font-weight: normal;
+      font-stretch: normal;
+      letter-spacing: 0px;
+      color: #ffffff;
+    }
+  }
+}
+</style>

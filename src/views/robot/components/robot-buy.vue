@@ -1,6 +1,6 @@
 <template>
   <div class="robot-buy sub-page">
-    <nav-bar :title="$t('机器买入')"></nav-bar>
+    <nav-bar :title="$t('方案买入')"></nav-bar>
     <div class="container">
       <div class="info-box">
         <div class="title">{{ $t('买入') }}</div>
@@ -8,25 +8,25 @@
           <div class="top-wrap">
             <div class="left">
               <div class="top-text">{{ $t('最低买入') }}</div>
-              <div class="bottom-text">R${{ robotInfo.min_num }}</div>
+              <div class="bottom-text">${{ robotInfo.min_num }}</div>
             </div>
             <div class="right">
               <div class="top-text">{{ $t('最高买入') }}</div>
-              <div class="bottom-text">R${{ robotInfo.max_num }}</div>
+              <div class="bottom-text">${{ robotInfo.max_num }}</div>
             </div>
           </div>
           <div class="field-wrap">
             <div class="text">{{ $t('买入金额') }}</div>
-            <van-field v-model="money" type="number" :placeholder="$t('请输入购买金额')" label="R$" label-width="25px"></van-field>
+            <van-field v-model="money" type="number" :placeholder="$t('请输入购买金额')" label="$" label-width="25px"></van-field>
           </div>
           <div class="money-wrap">
             <div class="left">
-              <span>{{ $t('您的机器人余额') }}：</span>
-              <span class="money">R${{ balance }}</span>
+              <span>{{ $t('您的资产余额') }}：</span>
+              <span class="money">${{ balance }}</span>
             </div>
             <div class="right">
               <span>{{ $t('手续费') }}：</span>
-              <span class="money">R${{ (money * robotInfo.shouxu).toFixed(2) }}</span>
+              <span class="money">${{ (money * robotInfo.shouxu).toFixed(2) }}</span>
             </div>
           </div>
         </div>

@@ -1,37 +1,33 @@
 <template>
   <div class="commit-order sub-page">
     <div class="container">
-      <nav-bar :title="$t('提交订单')" background-color="transparent">
-        <template #right>
-          <van-image :src="require('@/assets/mine/refresh-icon.png')" @click="handleRefresh"></van-image>
-        </template>
+      <nav-bar :title="$t('提交任务')" background-color="transparent">
+<!--        <template #right>-->
+<!--          <van-image :src="require('@/assets/mine/refresh-icon.png')" @click="handleRefresh"></van-image>-->
+<!--        </template>-->
       </nav-bar>
-      <div class="address-box" @click="handleToAddress">
-        <van-image :src="require('@/assets/hall/address-icon.png')" class="address-icon"></van-image>
-        <div class="text-wrap">
-          <div>
-            <span class="tel-text">{{ address.tel }}</span>
-            <span>{{ address.name }}</span>
-          </div>
-          <div>{{ address.address }}</div>
-        </div>
-        <van-image :src="require('@/assets/hall/right-arrow-icon.png')" class="arrow-icon"></van-image>
-      </div>
+      <!--      <div class="address-box" @click="handleToAddress">-->
+      <!--        <van-image :src="require('@/assets/hall/address-icon.png')" class="address-icon"></van-image>-->
+      <!--        <div class="text-wrap">-->
+      <!--          <div>-->
+      <!--            <span class="tel-text">{{ address.tel }}</span>-->
+      <!--            <span>{{ address.name }}</span>-->
+      <!--          </div>-->
+      <!--          <div>{{ address.address }}</div>-->
+      <!--        </div>-->
+      <!--        <van-image :src="require('@/assets/hall/right-arrow-icon.png')" class="arrow-icon"></van-image>-->
+      <!--      </div>-->
       <div class="top-info-box">
         <div class="title">
-          {{ $t('订单号') }}:{{ id }}
+          {{ $t('任务号') }}:{{ id }}
         </div>
-        <div class="content">
-          <div class="img-wrap">
-            <van-image :src="goodsPic"></van-image>
-          </div>
-          <div class="right-wrap">
-            <div class="name">
-              {{ goodsName }}
-            </div>
-            <div class="price">R$ {{ goodsPrice }}</div>
-          </div>
+        <div class="img-wrap">
+          <van-image :src="goodsPic"></van-image>
         </div>
+        <div class="name">
+          {{ goodsName }}
+        </div>
+        <div class="price">$ {{ goodsPrice }}</div>
       </div>
       <div class="bottom-info-box">
         <van-cell-group>
@@ -39,45 +35,48 @@
               v-for="item in cellList"
               :key="item.id"
               :title="item.title"
-              :class="{'main-color': item.id === 1 || item.id === 8}"
+              :class="[{'main-color': item.id === 1}, {'red-color': item.id === 9}]"
               :value="item.value"/>
         </van-cell-group>
-        <van-slider
-            v-model="value"
-            bar-height="6px"
-            inactive-color="#eeeeee"
-            active-color="#ff6c1e"
-            disabled
-            button-size="0"
-            :max="max"/>
+        <van-image :src="require('@/assets/hall/nonclick-love-icon.png')" class="love-icon" @click="handleClickLove" v-if="!isClickLove"></van-image>
+        <van-image :src="require('@/assets/hall/click-love-icon.png')" class="love-icon" v-else></van-image>
+        <!--        <van-slider-->
+        <!--            v-model="value"-->
+        <!--            bar-height="6px"-->
+        <!--            inactive-color="#eeeeee"-->
+        <!--            active-color="#ff6c1e"-->
+        <!--            disabled-->
+        <!--            button-size="0"-->
+        <!--            :max="max"/>-->
       </div>
       <div class="btn-box">
-        <van-button block @click="handleCommit">{{ $t('提交订单') }}</van-button>
+        <van-button block @click="handleCommit" :disabled="!isClickLove">{{ $t('提交任务') }}</van-button>
       </div>
-      <div class="complete-box">
-        <div class="img-wrap">
-          <van-image :src="require('@/assets/hall/complete-icon.png')"></van-image>
-        </div>
-        <div class="text-wrap">
-          <span>{{ $t('当您完成') }}</span>
-          <span> {{ max }} </span>
-          <span>{{ $t('个订单后，点击“结算佣金”按钮，系统会将您今天的利润添加到您的余额中。') }}</span>
-        </div>
-        <div class="btn-wrap">
-          <van-button block @click="handleComplete">{{ $t('结算佣金') }}</van-button>
-        </div>
-      </div>
+      <!--      <div class="complete-box">-->
+      <!--        <div class="img-wrap">-->
+      <!--          <van-image :src="require('@/assets/hall/complete-icon.png')"></van-image>-->
+      <!--        </div>-->
+      <!--        <div class="text-wrap">-->
+      <!--          <span>{{ $t('当您完成') }}</span>-->
+      <!--          <span> {{ max }} </span>-->
+      <!--          <span>{{ $t('个订单后，点击“结算佣金”按钮，系统会将您今天的利润添加到您的余额中。') }}</span>-->
+      <!--        </div>-->
+      <!--        <div class="btn-wrap">-->
+      <!--          <van-button block @click="handleComplete">{{ $t('结算佣金') }}</van-button>-->
+      <!--        </div>-->
+      <!--      </div>-->
     </div>
     <van-dialog v-model="visible" :show-confirm-button="false">
       <div class="dialog-container">
-        <div class="title">{{ $t('确认订单') }}</div>
-        <div class="text">{{ $t('我已确认订单信息正确') }}</div>
+        <div class="title">{{ $t('确认任务') }}</div>
+        <div class="text">{{ $t('我已确认任务信息正确') }}</div>
         <div class="btn-wrap">
           <van-button @click="handleCancel">{{ $t('取消') }}</van-button>
           <van-button @click="handleConfirm">{{ $t('确认') }}</van-button>
         </div>
       </div>
     </van-dialog>
+    <van-image :src="require('@/assets/hall/click-like.gif')" class="click-like-gif" v-if="isClickLike"></van-image>
     <result-dialog :visible.sync="showResult" :result="$t('提交成功')" :btn="false" :desc="$t('正在跳转页面...')"></result-dialog>
   </div>
 </template>
@@ -90,42 +89,47 @@ export default {
       {
         id: 1,
         title: this.$t('类别'),
-        value: ''
+        value: '',
       },
-      {
-        id: 2,
-        title: this.$t('日利润'),
-        value: '0%'
-      },
+      // {
+      //   id: 2,
+      //   title: this.$t('日利润'),
+      //   value: '0%',
+      // },
       {
         id: 3,
         title: this.$t('余额'),
-        value: '$ 0.00'
+        value: '$ 0.00',
       },
       {
         id: 4,
         title: this.$t('计算'),
-        value: '$ 0'
+        value: '$ 0',
       },
       {
         id: 5,
         title: this.$t('一次获利'),
-        value: '$ 0.00'
+        value: '$ 0.00',
       },
+      // {
+      //   id: 6,
+      //   title: this.$t('今天未确定的利润'),
+      //   value: '$ 0',
+      // },
+      // {
+      //   id: 7,
+      //   title: this.$t('今日设定利润'),
+      //   value: '$ 0',
+      // },
+      // {
+      //   id: 8,
+      //   title: this.$t('完成进度条'),
+      //   value: '0/0',
+      // },
       {
-        id: 6,
-        title: this.$t('今天未确定的利润'),
-        value: '$ 0'
-      },
-      {
-        id: 7,
-        title: this.$t('今日设定利润'),
-        value: '$ 0'
-      },
-      {
-        id: 8,
-        title: this.$t('完成进度条'),
-        value: '0/0'
+        id: 9,
+        title: this.$t('请点赞'),
+        value: '0/1',
       },
     ]
     return {
@@ -139,68 +143,40 @@ export default {
       goodsPrice: '0.00',
       visible: false,
       address: {},
-      showResult: false
+      showResult: false,
+      isClickLike: false,
+      isClickLove: false
     }
   },
   computed: {
-    cate () {
+    cate() {
       return this.$route.query.id
     }
   },
   created() {
+    console.log(this.$route.query.info)
     this.init()
   },
   methods: {
-    init () {
+    init() {
       this.address = this.$route.query.address
       const data = this.$route.query.info
       this.id = data.id
-      this.goodsPic =  'http://47.242.37.172' + data.goods_pic
+      this.goodsPic = data.goods_pic
       this.goodsName = data.goods_name
       this.goodsPrice = data.goods_price
       this.cellList[0].value = data.cate
-      this.cellList[1].value = data.rate + '%'
-      this.cellList[2].value = 'R$ ' + data.balance
-      this.cellList[3].value = data.count
-      this.cellList[4].value = 'R$ ' + data.profit
-      this.cellList[5].value = 'R$ ' + data.today_unsettled
-      this.cellList[6].value = 'R$ ' + data.today_unsettled
-      this.cellList[7].value = data.deal_count + '/' + data.total_task
+      // this.cellList[1].value = data.rate + '%'
+      this.cellList[1].value = '$ ' + data.balance
+      this.cellList[2].value = data.count
+      this.cellList[3].value = '$ ' + data.profit
+      // this.cellList[5].value = '$ ' + data.today_unsettled
+      // this.cellList[6].value = '$ ' + data.today_unsettled
+      // this.cellList[7].value = data.deal_count + '/' + data.total_task
       this.value = data.deal_count
       this.max = data.total_task
     },
-    // async grabOrder () {
-    //   try {
-    //     this.loading = true
-    //     const params = { cate: this.cate }
-    //     const resp = await this.$api.hall.grabOrder(params);
-    //     if (resp.code === 1) {
-    //       this.address = resp.data.address
-    //       const data = resp.data.info
-    //       this.id = data.id
-    //       this.goodsPic =  'http://47.242.37.172' + data.goods_pic
-    //       this.goodsName = data.goods_name
-    //       this.goodsPrice = data.goods_price
-    //       this.cellList[0].value = data.cate
-    //       this.cellList[1].value = data.rate + '%'
-    //       this.cellList[2].value = '$ ' + data.balance
-    //       this.cellList[3].value = data.count
-    //       this.cellList[4].value = '$ ' + data.profit
-    //       this.cellList[5].value = '$ ' + data.today_unsettled
-    //       this.cellList[6].value = '$ ' + data.today_unsettled
-    //       this.cellList[7].value = data.deal_count + '/' + data.total_task
-    //       this.value = data.deal_count
-    //       this.max = data.total_task
-    //     } else {
-    //       this.$toast.fail(resp.msg || resp.message)
-    //     }
-    //   } catch (e) {
-    //     this.$toast.fail(this.$t('发生错误'));
-    //   } finally {
-    //     this.loading = false
-    //   }
-    // },
-    handleRefresh () {
+    handleRefresh() {
       this.address = {}
       this.id = ''
       this.goodsPic = ''
@@ -220,20 +196,19 @@ export default {
         this.init();
       }, 500)
     },
-    handleCommit () {
+    handleCommit() {
       this.visible = true
     },
-    handleCancel () {
+    handleCancel() {
       this.visible = false
     },
-    async handleConfirm () {
+    async handleConfirm() {
       try {
-        const params = { goods_id: this.id }
+        const params = {goods_id: this.id}
         const resp = await this.$api.hall.buyProduct(params);
         if (resp.code === 1) {
           this.visible = false
           this.showResult = true
-          // this.$toast.success(this.$t('提交成功'))
           this.$utils.delayBack()
         } else {
           this.$toast.fail(resp.msg || resp.message)
@@ -242,9 +217,9 @@ export default {
         this.$toast.fail(this.$t('发生错误'));
       }
     },
-    async handleComplete () {
+    async handleComplete() {
       try {
-        const params = { goods_id: this.id }
+        const params = {goods_id: this.id}
         const resp = await this.$api.hall.settlement(params);
         if (resp.code === 1) {
           this.$toast.success(this.$t('结算成功'))
@@ -255,11 +230,18 @@ export default {
         this.$toast.fail(this.$t('发生错误'));
       }
     },
-    handleToAddress () {
-      this.$router.push({
-        name: 'shippingAddress',
-        label: '收货地址'
-      })
+    // handleToAddress() {
+    //   this.$router.push({
+    //     name: 'shippingAddress',
+    //     label: '收货地址'
+    //   })
+    // }
+    handleClickLove () {
+      this.isClickLove = true
+      this.isClickLike = true
+      setTimeout(() => {
+        this.isClickLike = false
+      }, 1800)
     }
   },
 }
@@ -268,21 +250,25 @@ export default {
 <style scoped lang="less">
 .commit-order {
   overflow: auto;
-  height: 100vh;
+  //height: 100vh;
 }
-.nav-bar  {
+
+.nav-bar {
   margin-left: -10px;
   margin-right: -10px;
   position: relative;
   top: -11px;
+
   .van-image {
     width: 20px;
     height: 17px;
   }
 }
+
 .container {
   background: url("../../../assets/hall/commit-order-bk.png") no-repeat left top/100% 282px;
   padding: 11px 10px 20px;
+
   .address-box {
     height: 80px;
     background-color: #ffffff;
@@ -291,15 +277,18 @@ export default {
     padding: 19px 12px;
     position: relative;
     margin-bottom: 33px;
+
     .address-icon {
       width: 43px;
       height: 43px;
       margin-right: 15px;
     }
+
     .text-wrap {
       .tel-text {
         margin-right: 6px;
       }
+
       div:first-child {
         font-family: PingFang-SC-Medium;
         font-size: 12px;
@@ -311,6 +300,7 @@ export default {
         margin-bottom: 8px;
         margin-top: 6px;
       }
+
       div:last-child {
         font-family: PingFang-SC-Medium;
         font-size: 12px;
@@ -321,6 +311,7 @@ export default {
         color: #999999;
       }
     }
+
     .arrow-icon {
       position: absolute;
       right: 15px;
@@ -330,12 +321,14 @@ export default {
       height: 10px;
     }
   }
+
   .top-info-box {
-    height: 147px;
+    height: 295px;
     background-color: #ffffff;
     margin-bottom: 7px;
     position: relative;
     padding: 15px 15px 20px;
+
     &::before {
       content: '';
       width: 100%;
@@ -346,6 +339,7 @@ export default {
       left: 0;
       right: 0;
     }
+
     .title {
       font-family: PingFang-SC-Medium;
       font-size: 12px;
@@ -354,60 +348,49 @@ export default {
       letter-spacing: 0px;
       color: #333333;
       line-height: 12px;
-      margin-bottom: 16px;
+      margin-bottom: 10px;
     }
-    .content {
-      display: flex;
-      height: 86px;
-      background-color: #f5f5f5;
-      border-radius: 5px;
-      .img-wrap {
-        background-color: #ffffff;
-        padding: 3px 11px 4px 9px;
-        width: 86px;
-        height: 86px;
-        .van-image {
-          width: 67px;
-          height: 80px;
-        }
+
+    .img-wrap {
+      text-align: center;
+      margin-bottom: 24px;
+      .van-image {
+        width: 120px;
+        height: 143px;
       }
-      .right-wrap {
-        flex: 1;
-        padding: 16px 17px 18px 21px;
-        .name {
-          font-family: PingFang-SC-Medium;
-          font-size: 12px;
-          font-weight: normal;
-          font-stretch: normal;
-          line-height: 18px;
-          letter-spacing: 0px;
-          color: #333333;
-          margin-bottom: 11px;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          line-break: anywhere;
-          display: -webkit-box;
-          -webkit-box-orient: vertical;
-          -webkit-line-clamp: 2;
-          height: 36px;
-        }
-        .price {
-          font-family: PingFang-SC-Bold;
-          font-size: 12px;
-          font-weight: normal;
-          font-stretch: normal;
-          line-height: 12px;
-          letter-spacing: 0px;
-          color: #e98d00;
-        }
-      }
+    }
+
+    .name {
+      font-family: PingFang-SC-Medium;
+      font-size: 12px;
+      font-weight: normal;
+      font-stretch: normal;
+      line-height: 18px;
+      letter-spacing: 0px;
+      color: #333333;
+      text-align: center;
+      padding: 0 50px;
+      margin-bottom: 10px;
+    }
+
+    .price {
+      font-family: PingFang-SC-Bold;
+      font-size: 18px;
+      font-weight: normal;
+      font-stretch: normal;
+      line-height: 18px;
+      letter-spacing: 0px;
+      color: #e98d00;
+      text-align: center;
     }
   }
+
   .bottom-info-box {
-    height: 371px;
+    height: 220px;
     background: #ffffff;
     margin-bottom: 43px;
     position: relative;
+
     &::after {
       content: '';
       width: 100%;
@@ -419,7 +402,17 @@ export default {
       right: 0;
       transform: rotateX(180deg);
     }
+
+    .love-icon {
+      position: absolute;
+      width: 60px;
+      height: 60px;
+      right: 0;
+      bottom: -20px;
+      z-index: 99;
+    }
   }
+
   ::v-deep .van-cell__title {
     flex: unset;
     font-family: PingFang-SC-Medium;
@@ -429,6 +422,7 @@ export default {
     letter-spacing: 0px;
     color: #333333;
   }
+
   ::v-deep .van-cell__value {
     font-family: PingFang-SC-Medium;
     font-size: 12px;
@@ -437,18 +431,23 @@ export default {
     letter-spacing: 0px;
     color: #333333;
   }
+
   ::v-deep .main-color .van-cell__value {
     color: #e98d00;
   }
+
   ::v-deep .van-hairline--top-bottom::after {
     border-width: 0;
   }
+
   .van-slider {
     width: calc(100% - 30px);
     margin: 0 auto;
   }
+
   .btn-box {
     margin-bottom: 24px;
+
     .van-button {
       height: 50px;
       background-color: #ff6c1e;
@@ -463,19 +462,23 @@ export default {
 
     }
   }
+
   .complete-box {
     height: 255px;
     background-color: #ffffff;
     border-radius: 5px;
     padding-top: 32px;
+
     .img-wrap {
       text-align: center;
       margin-bottom: 24px;
+
       .van-image {
         width: 70px;
         height: 60px;
       }
     }
+
     .text-wrap {
       font-family: PingFang-SC-Medium;
       font-size: 12px;
@@ -489,6 +492,7 @@ export default {
       text-align: center;
       margin: 0 auto 39px;
     }
+
     .btn-wrap {
       .van-button {
         width: 215px;
@@ -506,7 +510,11 @@ export default {
       }
     }
   }
+  ::v-deep .red-color .van-cell__title {
+    color: #f80a2b;
+  }
 }
+
 .dialog-container {
   width: 325px;
   height: 277px;
@@ -514,6 +522,7 @@ export default {
   border-radius: 10px;
   padding: 54px 20px 17px;
   text-align: center;
+
   .title {
     font-family: PingFang-SC-Bold;
     font-size: 18px;
@@ -524,6 +533,7 @@ export default {
     line-height: 18px;
     margin-bottom: 52px;
   }
+
   .text {
     height: 14px;
     font-family: PingFang-SC-Medium;
@@ -535,14 +545,16 @@ export default {
     color: #333333;
     margin-bottom: 72px;
   }
+
   .btn-wrap {
     display: flex;
     justify-content: space-between;
+
     .van-button {
       width: 135px;
       height: 50px;
       background-color: #ff6c1e;
-      border-color: ;
+      border-color: #ff6c1e;
       border-radius: 10px;
       font-family: PingFang-SC-Bold;
       font-size: 18px;
@@ -552,5 +564,12 @@ export default {
       color: #ffffff;
     }
   }
+}
+
+.click-like-gif {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
 }
 </style>

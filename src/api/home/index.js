@@ -61,6 +61,14 @@ const home =  {
         const url = '/api/info/withDraw'
         return await axios.get(url, {params} )
     },
+    async userCount (params) {
+        const url = '/api/user/userCount'
+        return await axios.get(url, {params} )
+    },
+    async getNewNotice (params) {
+        const url = '/api/info/getNewNotice'
+        return await axios.get(url, {params} )
+    },
 }
 
 export default home

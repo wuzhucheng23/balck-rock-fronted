@@ -10,14 +10,17 @@
       <div class="recode-content">
         <div class="recode-item" v-for="item in showList" :key="item.id">
           <div class="left-wrap">
-            <div class="type" v-if="$route.query.title === $t('充值记录')">{{ item.status }}</div>
+            <div class="type" v-if="title === $t('充值记录')">{{ item.status }}</div>
             <div class="type" v-else>{{ item.type_text }}</div>
             <div class="time">{{ item.addtime }}</div>
           </div>
-          <div class="money">
-            <span v-if="$route.query.title === $t('充值记录')">+</span>
-            <span v-else></span>
-            <span>{{ item.num || item.num_txt }}</span>
+          <div class="right-wrap">
+            <div class="money">
+              <span v-if="title === $t('充值记录')">+</span>
+              <span v-else></span>
+              <span>{{ item.num || item.num_txt }}</span>
+            </div>
+            <div class="desc" v-if="title !== $t('充值记录')">{{ item.note }}</div>
           </div>
         </div>
       </div>
@@ -130,6 +133,18 @@ export default {
         line-height: 16px;
         letter-spacing: 0px;
         color: #f57e0a;
+        text-align: right;
+        margin-bottom: 8px;
+      }
+      .desc {
+        text-align: right;
+        font-family: PingFang-SC-Medium;
+        font-size: 12px;
+        line-height: 12px;
+        font-weight: normal;
+        font-stretch: normal;
+        letter-spacing: 0px;
+        color: #cccccc;
       }
     }
   }

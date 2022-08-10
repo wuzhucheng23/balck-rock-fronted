@@ -6,8 +6,6 @@
           <van-image :src="require('@/assets/home/logo-icon.png')"></van-image>
         </div>
         <div class="name-money">
-<!--          <span class="name">{{ username }}</span>-->
-<!--          <span class="money">R${{ balance }}</span>-->
           <span class="money">{{ username }}</span>
         </div>
       </div>
@@ -30,48 +28,21 @@
             color="#0c0c0c"
             :text="announcement"/>
       </div>
-      <div class="operation-box">
-        <van-grid
-            clickable
-            :column-num="4"
-            icon-size="44px"
-            :border="false">
-          <van-grid-item
-              v-for="item in gridList"
-              :key="item.text"
-              :icon="item.icon"
-              :text="item.text"
-              @click="handleToRoute(item)"/>
-        </van-grid>
-      </div>
       <div class="popular-brand-box">
-        <div class="title">{{ $t('热门品牌') }}</div>
+        <div class="title">{{ $t('任务领取') }}</div>
         <div class="content">
           <div class="content-item"
                v-for="(item, index) in popularBrandList"
-               @click="handleToGrabOrder(item, 'brand')"
+               @click="handleToGrabOrder(item)"
                :key="item.id">
             <div class="text">{{ item.name }}</div>
-            <div class="money">
-              <van-image :src="require('@/assets/home/lock-open.png')" v-if="item.open"></van-image>
-              <van-image :src="require('@/assets/home/lock-close.png')" v-else></van-image>
-              <span>R${{ item.recharge }}</span>
-            </div>
             <div class="box" :class="'box-' + (index  +1)">
               <van-image :src="require('@/assets/home/crown-icon.png')"></van-image>
               <span class="number">{{ index + 1 }}</span>
               <div class="right-wrap">
                 <div>
-                  <span>{{ $t('订购') }}</span>
-                  <span>{{ item.deal_count }}</span>
-                </div>
-<!--                <div>-->
-<!--                  <span>积分</span>-->
-<!--                  <span>666</span>-->
-<!--                </div>-->
-                <div>
                   <span>{{ $t('收益') }}</span>
-                  <span>{{ item.bili }}%</span>
+                  <span>{{ item.bili }}U</span>
                 </div>
               </div>
             </div>
@@ -79,22 +50,12 @@
           </div>
         </div>
       </div>
-      <div class="recommendation-box">
-        <div class="title">{{ $t('商品推荐') }}</div>
-        <div class="content">
-          <div class="content-item" v-for="item in recommendation" :key="item.id" @click="handleToGrabOrder(null, 'goods')">
-            <div class="img">
-              <van-image :src="item.goods_pic"></van-image>
-              <div class="text">{{ item.goods_name }}</div>
-              <div class="money-brand">
-                <span class="money">R${{ item.goods_price }}</span>
-                <span class="brand">{{ item.cid }}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
+    <van-dialog v-model="visible" :show-confirm-button="false" close-on-click-overlay>
+      <div class="dialog-container">
+        <div class="content" v-html="dialogContent"></div>
+      </div>
+    </van-dialog>
   </div>
 </template>
 
@@ -161,14 +122,18 @@ export default {
       recommendation: [],
       username: '',
       balance: '',
+      dialogContent: '',
+      visible: false
     }
   },
   created() {
     this.init()
+    if (this.$route.query.visible) this.visible = true
   },
   methods: {
     init () {
       this.profile()
+      this.getNewNotice()
       this.getShowContent()
     },
     async getShowContent () {
@@ -207,8 +172,24 @@ export default {
         this.loading = false
       }
     },
-    handleOpenLink(url) {
-      window.open(url)
+    async getNewNotice () {
+      try {
+        this.loading = true
+        const resp = await this.$api.home.getNewNotice();
+        if (resp.code === 1) {
+          const data = resp.data
+          this.dialogContent = data.content
+        } else {
+          this.$toast.fail(resp.msg || resp.message)
+        }
+      } catch (e) {
+        this.$toast.fail(this.$t('发生错误'));
+      } finally {
+        this.loading = false
+      }
+    },
+    handleOpenLink({ link }) {
+      window.open(link)
     },
     handleToRoute(item) {
       this.$router.push({
@@ -216,23 +197,19 @@ export default {
         label: item.label
       })
     },
-    handleToGrabOrder (item, type) {
-      if (type === 'brand') {
-        if (!item.open) return this.$toast(this.$t('您的余额不足，尚未有资格进入此房间'))
-        this.$router.push({
-          name: 'grabOrder',
-          label: '抢单',
-          query: {
-            id: item.id,
-            title: item.name
-          }
-        })
-      } else {
-        this.$router.push({
-          name: 'grabOrder',
-          label: '抢单',
-        })
-      }
+    handleToGrabOrder (item) {
+      // if (!item.open) return this.$toast(this.$t('您的余额不足，尚未有资格进入此房间'))
+      this.$router.push({
+        name: 'grabOrder',
+        label: '抢单',
+        query: {
+          id: item.id,
+          title: item.name,
+          img: item.cate_pic,
+          open: item.open,
+          recharge: item.recharge
+        }
+      })
     },
   },
 }
@@ -343,19 +320,23 @@ export default {
       height: 158px;
       width: calc((100% - 15px) / 2);
       border-radius: 2px;
-      padding: 17px 9px 13px;
+      padding: 10px;
       margin-bottom: 15px;
       background: #ffffff;
       position: relative;
       .text {
+        padding-left: 68px;
         font-family: PingFang-SC-Bold;
         font-size: 14px;
-        line-height: 14px;
+        line-height: 18px;
+        height: 58px;
+        display: flex;
+        align-items: center;
         font-weight: normal;
         font-stretch: normal;
         letter-spacing: 0px;
         color: #333333;
-        margin-bottom: 10px;
+        margin-bottom: 6px;
         position: relative;
         z-index: 1;
       }
@@ -415,7 +396,7 @@ export default {
             margin-right: 8px;
           }
           div:first-child {
-            margin-bottom: 6px;
+            //margin-bottom: 6px;
           }
         }
       }
@@ -451,8 +432,8 @@ export default {
         width: 58px;
         height: 58px;
         position: absolute;
-        right: 10px;
-        top: 5px;
+        left: 10px;
+        top: 10px;
         z-index: 0;
       }
     }
@@ -476,7 +457,7 @@ export default {
       justify-content: space-between;
     }
     .content-item {
-      height: 235px;
+      height: 200px;
       width: calc((100% - 15px) / 2);
       background-color: #ffffff;
       border-radius: 2px;
@@ -504,7 +485,7 @@ export default {
         display: -webkit-box;
         -webkit-box-orient: vertical;
         -webkit-line-clamp: 2;
-        margin-bottom: 10px;
+        //margin-bottom: 10px;
       }
       .money-brand {
         display: flex;
@@ -529,6 +510,12 @@ export default {
         }
       }
     }
+  }
+}
+.van-dialog {
+  border-radius: 10px;
+  .dialog-container {
+    padding: 15px;
   }
 }
 </style>

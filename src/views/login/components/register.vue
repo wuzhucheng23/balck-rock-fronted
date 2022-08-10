@@ -2,7 +2,12 @@
   <div class="register sub-page">
     <div class="container">
       <div class="title-box">
-        <van-image :src="require('@/assets/login/logo-text.png')"></van-image>
+        <div>
+          <van-image :src="require('@/assets/login/logo.png')" class="logo-img"></van-image>
+        </div>
+        <div>
+          <van-image :src="require('@/assets/login/logo-text.png')" class="logo-text-img"></van-image>
+        </div>
       </div>
       <div class="field-box">
         <div class="field-item">
@@ -50,12 +55,26 @@
         <div class="field-item">
           <div class="field-title">
             <van-image :src="require('@/assets/login/name-icon.png')"></van-image>
-            <span>{{ $t('用户名') }}</span>
+            <span>{{ $t('电话号码') }}</span>
           </div>
           <div class="field-value">
-            <van-field v-model="username" :placeholder="$t('请输入用户名(选填)')" type="text"></van-field>
+            <van-field v-model="phone" :placeholder="$t('请输入电话号码')" type="text">
+              <template #label>
+                <!--                <span @click="handleShowCode" class="label-code">+{{ areaCode }}</span>-->
+                <van-field class="area-code-field" v-model="areaCode" type="text" :placeholder="$t('区号')" label="+" label-width="5px"></van-field>
+              </template>
+            </van-field>
           </div>
         </div>
+<!--        <div class="field-item">-->
+<!--          <div class="field-title">-->
+<!--            <van-image :src="require('@/assets/login/name-icon.png')"></van-image>-->
+<!--            <span>{{ $t('电话号码') }}</span>-->
+<!--          </div>-->
+<!--          <div class="field-value">-->
+<!--            <van-field v-model="phone" :placeholder="$t('请输入电话号码')" type="tel"></van-field>-->
+<!--          </div>-->
+<!--        </div>-->
         <div class="operation">
           <div class="language-wrap" @click="handleToLanguage">
             <van-image :src="require('@/assets/login/language-icon.png')"></van-image>
@@ -76,6 +95,18 @@
       </div>
     </div>
     <result-dialog :visible.sync="visible" :result="$t('注册成功')" :btn="false" :desc="$t('正在跳转页面...')"></result-dialog>
+    <van-popup v-model="visiblePopup" round position="bottom">
+      <van-picker
+          show-toolbar
+          :columns="columns"
+          :default-index="defaultIndex"
+          :loading="initLoading"
+          :confirm-button-text="$t('确定')"
+          :cancel-button-text="$t('取消')"
+          @cancel="handleCancel"
+          @confirm="handleConfirm"
+      />
+    </van-popup>
   </div>
 </template>
 
@@ -85,6 +116,7 @@ export default {
   name: "register",
   data() {
     return {
+      phone: '',
       username: '',
       password: '',
       inviteCode: '',
@@ -92,15 +124,22 @@ export default {
       certificateCode: '',
       loading: false,
       finger: '',
-      time: 60 * 1000,
+      time: 180 * 1000,
       disabledSend: false,
       optLoading: false,
-      visible: false
+      visible: false,
+      visiblePopup: false,
+      columns: [],
+      areaCodeList: [],
+      defaultIndex: 0,
+      initLoading: false,
+      areaCode: '',
     }
   },
   created() {
     const code = this.$route.query.code
     if (code) this.inviteCode = code
+    // this.getAreaCode()
     this.getFinger()
   },
   methods: {
@@ -132,10 +171,34 @@ export default {
         this.finger = murmur
       })
     },
+    async getAreaCode () {
+      try {
+        // this.loading = true
+        const resp = await this.$api.login.getAreaCode();
+        if (resp.code === 1) {
+          const data = resp.data
+          this.areaCodeList = data
+          this.columns = data.map(item => item.area_code)
+          if (data.length > 0) this.areaCode = data[0].area_code
+        } else {
+          this.$toast.fail(resp.msg || resp.message)
+        }
+      } catch (e) {
+        this.$toast.fail(this.$t('发生错误'));
+      } finally {
+        // this.loading = false
+      }
+    },
     async handleSendOpt() {
-      if (!this.email) return this.$toast(this.$t('Please enter email'))
+      if (!this.email) return this.$toast(this.$t('请输入邮箱'))
+      // if (!this.phone) return this.$toast(this.$t('请输入电话号码'))
       this.optLoading = true
-      const params = {email: this.email, type: 1}
+      const params = {
+        // tel: this.phone,
+        // areaId: this.areaCodeList.find(item => item.area_code === this.areaCode).id,
+        email: this.email,
+        type: 1,
+      }
       try {
         const res = await this.$api.login.emailVerify(params)
         if (res.code === 1) {
@@ -153,6 +216,8 @@ export default {
     async handleRegister () {
       if (!this.inviteCode) return this.$toast(this.$t('请输入邀请码'))
       if (!this.email) return this.$toast(this.$t('请输入邮箱'))
+      if (!this.areaCode) return this.$toast(this.$t('请输入区号'))
+      if (!this.phone) return this.$toast(this.$t('请输入电话号码'))
       if (!this.certificateCode) return this.$toast(this.$t('请输入验证码'))
       if (!this.password) return this.$toast(this.$t('请输入密码'))
       if (this.password.length < 6) return this.$toast(this.$t('密码不能少于6位字符'))
@@ -163,7 +228,7 @@ export default {
         invite_code: this.inviteCode,
         verify_code: this.certificateCode,
         guid: this.finger,
-        username: this.username,
+        phone: this.areaCode +  this.phone,
       }
       try {
         const res = await this.$api.login.registered(params)
@@ -171,7 +236,7 @@ export default {
           // this.$toast.success(res.msg)
           this.visible = true
           localStorage.setItem('token', 'Bearer ' + res.data.token)
-          this.$utils.delayPush('homeIndex', '首页')
+          this.$utils.delayPush('homeIndex', '首页', { visible: true })
         } else {
           this.$toast.fail(res.msg || res.message)
         }
@@ -183,14 +248,24 @@ export default {
     },
     handleFinish () {
       this.disabledSend = false
-    }
+    },
+    handleShowCode () {
+      this.visiblePopup = true
+    },
+    handleCancel () {
+      this.visiblePopup = false;
+    },
+    handleConfirm (value) {
+      this.areaCode = value
+      this.handleCancel();
+    },
   },
 }
 </script>
 
 <style scoped lang="less">
 .container {
-  height: 100vh;
+  height: 100%;
   overflow: auto;
   padding-top: 102px;
   background: url("../../../assets/login/login-bk.png") no-repeat center/cover;
@@ -199,11 +274,15 @@ export default {
   }
   .title-box {
     text-align: center;
-    text-align: center;
     margin-bottom: 48px;
-    .van-image {
-      width: 166px;
-      height: 132px;
+    .logo-img {
+      width: 88px;
+      height: 88px;
+      margin-bottom: 15px;
+    }
+    .logo-text-img {
+      width: 142px;
+      height: 24px;
     }
   }
   .field-box {
@@ -325,5 +404,27 @@ export default {
 
 ::v-deep .van-count-down {
   color: #f7dbae;
+}
+
+::v-deep .van-loading--spinner {
+  position: relative;
+  top: -1px;
+  margin-right: 6px;
+}
+
+::v-deep .van-popup--bottom {
+  border-radius: 10px 10px 0 0;
+}
+
+::v-deep .van-field__label {
+  color: #fff;
+  font-size: 18px;
+  width: unset;
+  margin-right: 16px;
+}
+
+.area-code-field {
+  width: 90px;
+  border-bottom: 0!important;
 }
 </style>

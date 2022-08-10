@@ -2,11 +2,11 @@
   <div class="index main-page">
     <div class="container">
       <div class="info-box">
-        <div class="title">{{ $t('机器人') }}</div>
+        <div class="title">{{ $t('存币生息') }}</div>
         <div class="content">
           <div class="content-item" @click="handleToMyRobot">
             <div class="left-wrap">
-              <div class="title">{{ $t('我的机器人') }}</div>
+              <div class="title">{{ $t('历史记录') }}</div>
               <div class="more">{{ $t('查看') }}</div>
             </div>
             <van-image :src="require('@/assets/robot/my-robot.png')"></van-image>
@@ -20,7 +20,7 @@
           </div>
         </div>
         <div class="btn">
-          <div class="text">{{ $t('我的机器资产') }}：<span>R${{ balance }}</span></div>
+          <div class="text">{{ $t('我的资产') }}：<span>${{ balance }}</span></div>
           <div class="more">
             <van-button @click="handleToWithdraw">{{ $t('转到余额') }}</van-button>
             <van-button @click="handleToDeposit">{{ $t('转入') }}</van-button>
@@ -37,7 +37,7 @@
             <span class="angle-text">{{ item.angleText }}</span>
           </div>
           <div class="title">{{ item.name }}</div>
-          <div class="value">R${{ item.min_num + '-' + item.max_num }}</div>
+          <div class="value">${{ item.min_num + '-' + item.max_num }}</div>
           <div class="bottom-wrap">
             <div class="earnings">
               <div class="text">{{ $t('收益') }}</div>
@@ -60,7 +60,7 @@ export default {
   data() {
     const robotList = [
       {
-        angleText: this.$t('机器') + '1',
+        angleText: this.$t('方案') + '1',
         angleIcon: require('@/assets/robot/angle-one.png'),
         title: '普通',
         value: '$0.00',
@@ -69,7 +69,7 @@ export default {
         background: '#f1d8a2',
       },
       {
-        angleText: this.$t('机器') + '2',
+        angleText: this.$t('方案') + '2',
         angleIcon: require('@/assets/robot/angle-two.png'),
         title: '普通',
         value: '$0.00',
@@ -78,7 +78,7 @@ export default {
         background: '#f0d3b5',
       },
       {
-        angleText: this.$t('机器') + '3',
+        angleText: this.$t('方案') + '3',
         angleIcon: require('@/assets/robot/angle-three.png'),
         title: '普通',
         value: '0.00',
@@ -87,7 +87,7 @@ export default {
         background: '#f1b7a9',
       },
       {
-        angleText: this.$t('机器') + '4',
+        angleText: this.$t('方案') + '4',
         angleIcon: require('@/assets/robot/angle-four.png'),
         title: '普通',
         value: '$0',
@@ -96,7 +96,7 @@ export default {
         background: '#c9abf1',
       },
       {
-        angleText: this.$t('机器') + '5',
+        angleText: this.$t('方案') + '5',
         angleIcon: require('@/assets/robot/angle-five.png'),
         title: '普通',
         value: '$0.00',
@@ -105,7 +105,7 @@ export default {
         background: '#9fe4eb',
       },
       {
-        angleText: this.$t('机器') + '6',
+        angleText: this.$t('方案') + '6',
         angleIcon: require('@/assets/robot/angle-six.png'),
         title: '普通',
         value: '$0.00',
@@ -202,6 +202,7 @@ export default {
       color: #563608;
       margin-bottom: 33px;
       text-align: center;
+      white-space: nowrap;
     }
     .content {
       display: flex;
@@ -277,7 +278,7 @@ export default {
           line-height: 20px;
           letter-spacing: 0px;
           color: #333333;
-          width: 83px;
+          width: 97px;
           margin-left: 10px;
           border-color: #ebd4a8;
         }
@@ -290,7 +291,7 @@ export default {
     justify-content: space-evenly;
     .robot-item {
       width: calc((100% - 45px) / 2);
-      height: 140px;
+      //height: 140px;
       border-radius: 5px;
       margin-bottom:  15px;
       position: relative;
@@ -311,7 +312,7 @@ export default {
         }
         .angle-text {
           position: absolute;
-          left: 3px;
+          left: 8px;
           top: 6px;
           font-family: PingFang-SC-Medium;
           font-size: 10px;

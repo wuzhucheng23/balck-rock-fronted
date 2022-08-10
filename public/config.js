@@ -1,1 +1,2 @@
-var ip = 'http://47.242.37.172'
+var ip = 'https://admin.europe-fund.com'    // 正式
+// var ip = 'https://admin.dr68.cc/'   // 测试

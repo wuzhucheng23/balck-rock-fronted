@@ -1,20 +1,34 @@
+const ImageMinimizerPlugin = require('image-minimizer-webpack-plugin')
 module.exports = {
   publicPath: process.env.NODE_ENV === 'production' ? './' : '/',
   productionSourceMap: false,
-  // devServer: {
-  //   port: 8080,
-  //   open: true,
-  //   disableHostCheck: true,
-  //   proxy: {
-  //     '/api': {
-  //       target: 'http://47.88.9.231:81',
-  //       ws: true,
-  //       changeOrigin: true,
-  //       logLevel: 'debug',
-  //       pathRewrite: {
-  //         '^/api': ''
-  //       },
-  //     }
-  //   },
-  // },
+  configureWebpack: {
+    optimization: {
+      minimizer: [
+        new ImageMinimizerPlugin({
+          minimizer: {
+            implementation: ImageMinimizerPlugin.imageminGenerate,
+            options: {
+              plugins: [
+                ['gifsicle', { interlaced: true }],
+                ['jpegtran', { progressive: true }],
+                ['optipng', { optimizationLever: 5 }],
+                ['svgo', {
+                  plugins: [
+                    ['preset-default', 'prefixIds', {
+                      name: 'sortAttrs',
+                      params: {
+                        xmlnsOrder: 'alphabetical'
+                      }
+                    }]
+                  ]
+                }
+                ]
+              ]
+            }
+          }
+        })
+      ]
+    }
+  }
 };

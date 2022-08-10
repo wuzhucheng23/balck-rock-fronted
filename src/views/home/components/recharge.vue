@@ -7,9 +7,9 @@
     </nav-bar>
     <div class="container">
       <div class="recharge-money-box">
-        <div class="title">{{ $t('雷亚尔') }}</div>
+        <div class="title">{{ $t('充值金额') }}</div>
         <van-field v-model="money"
-                   :placeholder="$t('请输入雷亚尔')"
+                   :placeholder="$t('请输入充值金额')"
                    label-width="60px"
                    @blur="handleBlur"
                    type="number">
@@ -18,7 +18,7 @@
           </template>
         </van-field>
         <div class="settlement-wrap">
-          <span class="text">{{ $t('平台结算货币') }}:≈R$</span>
+          <span class="text">{{ $t('平台结算货币') }}:≈$</span>
 <!--          <span class="value">{{ (+money * +exchangeRate).toFixed(6) || 0.000000 }}</span>-->
           <span class="value">{{ money }}</span>
         </div>
@@ -47,15 +47,16 @@
           </div>
         </div>
       </div>
-      <div class="recharge-instructions-box">
-        <div class="title">{{ $t('充值说明') }}：</div>
-        <div class="content">
-          <div class="detail" v-html="instructions"></div>
-        </div>
-      </div>
+<!--      <div class="recharge-instructions-box">-->
+<!--        <div class="title">{{ $t('充值说明') }}：</div>-->
+<!--        <div class="content">-->
+<!--          <div class="detail" v-html="instructions"></div>-->
+<!--        </div>-->
+<!--      </div>-->
     </div>
     <div class="btn">
-      <van-button block @click="handleToConfirm">{{ $t('立即充值') }}</van-button>
+      <van-button block @click="handleToConfirm" :loading="buttonLoading"
+                  loading-type="spinner" :loading-text="$t('正在前往...')">{{ $t('立即充值') }}</van-button>
     </div>
   </div>
 </template>
@@ -73,6 +74,7 @@ export default {
       typeList: [],
       loading: false,
       instructions: '',
+      buttonLoading: false
     }
   },
   computed: {
@@ -84,7 +86,7 @@ export default {
     }
   },
   created() {
-    this.recharge()
+    // this.recharge()
     this.getTopupAdds()
   },
   methods: {
@@ -106,22 +108,22 @@ export default {
         }
       })
     },
-    async recharge () {
-      try {
-        this.loading = true
-        const resp = await this.$api.home.recharge();
-        if (resp.code === 1) {
-          const data = resp.data
-          this.instructions = data.detail
-        } else {
-          this.$toast.fail(resp.msg || resp.message)
-        }
-      } catch (e) {
-        this.$toast.fail(this.$t('发生错误'));
-      } finally {
-        this.loading = false
-      }
-    },
+    // async recharge () {
+    //   try {
+    //     this.loading = true
+    //     const resp = await this.$api.home.recharge();
+    //     if (resp.code === 1) {
+    //       const data = resp.data
+    //       this.instructions = data.detail
+    //     } else {
+    //       this.$toast.fail(resp.msg || resp.message)
+    //     }
+    //   } catch (e) {
+    //     this.$toast.fail(this.$t('发生错误'));
+    //   } finally {
+    //     this.loading = false
+    //   }
+    // },
     async getTopupAdds() {
       try {
         this.loading = true
@@ -140,20 +142,51 @@ export default {
         this.loading = false
       }
     },
-    handleToConfirm () {
+    async handleToConfirm () {
       if (!this.money) return this.$toast(this.$t('请输入货币数量'))
-
       // if ((+this.money * +this.exchangeRate).toFixed(6) < 20) return this.$toast(this.$t('存款金额不能低于20'))
-      this.$router.push({
-        name: 'rechargeConfirm',
-        label: '充值确定',
-        query: {
+      this.buttonLoading = true
+      try {
+        const params = {
           type: this.activeType,
-          money: this.money,
-          address: this.address,
-          account: (+this.money / +this.exchangeRate).toFixed(6) || 0.000000
+          amount: +this.money,
         }
-      })
+        const res = await this.$api.mine.intention(params)
+        if (res.code === 1) {
+          this.$router.push({
+            name: 'rechargeConfirm',
+            label: '充值确定',
+            query: {
+              type: this.activeType,
+              money: this.money,
+              address: this.address,
+              account: (+this.money / +this.exchangeRate).toFixed(6) || 0.000000
+            }
+          })
+        } else {
+          return this.$toast.fail(res.msg || res.message)
+        }
+      } catch (e) {
+        this.$toast.fail(this.$t('发生错误'))
+      } finally {
+        this.buttonLoading = false
+      }
+    },
+    async handleRecodeCustomer () {
+      try {
+        const params = {
+          type: this.activeType,
+          amount: +this.money,
+        }
+        const res = await this.$api.mine.intention(params)
+        if (res.code === 1) {
+          return
+        } else {
+          this.$toast.fail(res.msg || res.message)
+        }
+      } catch (e) {
+        this.$toast.fail(this.$t('发生错误'))
+      }
     },
     handleBlur () {
       this.activeMoney = this.money
@@ -275,7 +308,7 @@ export default {
   }
   .select-type-box {
     background: #ffffff;
-    padding: 13px 15px 15px;
+    padding: 13px 6px 15px 15px;
     .title {
       font-family: PingFang-SC-Bold;
       font-size: 18px;
@@ -289,9 +322,9 @@ export default {
     .content {
       display: flex;
       flex-wrap: wrap;
-      justify-content: space-between;
+      //justify-content: space-between;
       .content-item {
-        width: calc((100% - 18px) / 3);
+        width: calc((100% - 27px) / 3);
         height: 95px;
         background-color: #f8f8f8;
         border-radius: 5px;
@@ -299,6 +332,7 @@ export default {
         text-align: center;
         padding-top: 10px;
         margin-bottom: 10px;
+        margin-right: 9px;
         .van-image {
           width: 40px;
           height: 40px;

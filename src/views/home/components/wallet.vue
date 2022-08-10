@@ -157,7 +157,8 @@ export default {
         color: #ffffff;
       }
       .btn .van-button{
-        width: 70px;
+        min-width: 70px;
+        padding: 0 10px;
         height: 28px;
         background-color: #ffffff;
         border-radius: 14px;

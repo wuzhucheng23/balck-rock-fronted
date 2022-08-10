@@ -3,14 +3,14 @@
     <nav-bar :title="$t('转出')"></nav-bar>
     <div class="container">
       <div class="money-box">
-        <div class="title">{{ $t('从机器人余额提现至我的余额') }}</div>
+        <div class="title">{{ $t('从资产余额提现至我的余额') }}</div>
         <div class="content">
           <div class="text">{{ $t('提现到我的余额') }}</div>
           <div class="field">
-            <van-field v-model="money" type="number" :placeholder="$t('请输入提现金额')" label="R$" label-width="25px"></van-field>
+            <van-field v-model="money" type="number" :placeholder="$t('请输入提现金额')" label="$" label-width="25px"></van-field>
           </div>
           <div class="my-money">
-            <div>{{ $t('您的机器人余额') }}：<span class="money">R${{ balance }}</span></div>
+            <div>{{ $t('您的资产余额') }}：<span class="money">${{ balance }}</span></div>
           </div>
         </div>
       </div>
@@ -20,7 +20,7 @@
       </div>
       <div class="tip-box">
         <div class="title">{{ $t('说明') }}：</div>
-        <div class="content">{{ $t('从机器人余额提现至我的余额，提现需收取15 % 手续费。') }}</div>
+        <div class="content">{{ $t('从资产余额提现至我的余额，提现需收取15 % 手续费。') }}</div>
       </div>
     </div>
     <result-dialog :visible.sync="showResult" :result="$t('转出成功')" :btn="false" :desc="$t('正在跳转页面...')"></result-dialog>
