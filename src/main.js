@@ -1,40 +1,19 @@
-import Vue from 'vue'
-import App from './App.vue'
-import router from './router'
-import store from './store'
+import Vue from 'vue';
+import App from './App.vue';
+import router from './router';  // 引入路由
+import store from './store';    // 引入仓库
+import i18n from './locale';    // 引入多语言
+import '@/api';  // 引入api
+import '@/components';   // 引入全局组件
+import '@/plugins';  // 引入相关插件
+import '@/style';    // 引入主题样式
+import '@/utils';    // 引入工具函数
 
-Vue.config.productionTip = false
-
-// 引入全局样式
-import '@/theme/global-reset.css'
-import '@/theme/global-class.css'
-
-// 引入vant组件库
-import '@/plugins/vant-ui'
-
-// 引入api
-import * as api from '@/api'
-Vue.prototype.$api = api
-
-// 引入工具函数
-import utils from './utils'
-Vue.prototype.$utils = utils
-
-// 引入公共组件
-import '@/components'
-
-// 引入vue-video-player
-import '@/plugins/vue-video-player'
-
-// 引入设备检测插件
-import '@/plugins/vue-device-detector'
-
-// 引入i18n
-import i18n from "@/plugins/vue-i18n";
+Vue.config.productionTip = false;
 
 new Vue({
-  router,
-  store,
-  i18n,
-  render: h => h(App)
-}).$mount('#app')
+    router,
+    store,
+    i18n,
+    render: h => h(App)
+}).$mount('#app');

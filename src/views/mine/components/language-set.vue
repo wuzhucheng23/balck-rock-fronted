@@ -1,11 +1,17 @@
 <template>
   <div class="language-set sub-page">
-    <nav-bar :title="$t('语言设置')"></nav-bar>
+    <nav-bar :title="$t('语言设置')"/>
     <div class="container">
       <div class="language-box">
-        <div class="language-item" v-for="item in setList" :key="item.title" @click="handleClick(item)">
+        <div class="language-item"
+             v-for="item in setList"
+             :key="item.title"
+             @click="handleClick(item)">
           <span>{{ item.title }}</span>
-          <van-image :src="require('@/assets/mine/correct-icon.png')" v-if="item.value === value"></van-image>
+          <van-image
+              :src="require('@/assets/mine/correct-icon.png')"
+              v-if="item.value === value"
+          />
         </div>
       </div>
     </div>
@@ -14,37 +20,25 @@
 
 <script>
 export default {
-  name: "language-set",
+  name: "LanguageSet",
   data() {
     const setList = [
       {
-        title: 'English',
-        value: 'en'
+        title: '简体中文',
+        value: 'cn'
       },
-      // {
-      //   title: '简体中文',
-      //   value: 'cn'
-      // },
       {
         title: '繁体中文',
         value: 'hk'
       },
       {
-        title: 'Français',
-        value: 'fr'
-      },
-      {
-        title: 'Italiano',
-        value: 'it'
-      },
-      {
-        title: 'Deutschland',
-        value: 'de'
-      },
+        title: 'English',
+        value: 'en'
+      }
     ]
     return {
       setList,
-      value: 'en'
+      value: 'cn'
     }
   },
   created() {
@@ -79,13 +73,11 @@ export default {
       justify-content: space-between;
       align-items: center;
       padding: 0 15px;
+
       span {
         font-family: PingFang-SC-Medium;
         font-size: 14px;
-        font-weight: normal;
-        font-stretch: normal;
         line-height: 14px;
-        letter-spacing: 0px;
         color: #333333;
       }
 
@@ -98,8 +90,9 @@ export default {
         position: absolute;
         left: 15px;
         right: 15px;
-        bottom: 0px;
+        bottom: 0;
       }
+
       .van-image {
         width: 19px;
         height: 14px;

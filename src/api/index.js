@@ -1,12 +1,12 @@
-import login from "./login"
-import home from "./home";
-import hall from "./hall";
-import robot from "./robot";
-import service from "./service";
-import mine from "./mine";
+import Vue from "vue";
+import login from "@/api/login"
+import home from "@/api/home";
+import hall from "@/api/hall";
+import robot from "@/api/robot";
+import service from "@/api/service";
+import mine from "@/api/mine";
 
-
-export {
+const api = {
     login,
     home,
     hall,
@@ -14,3 +14,5 @@ export {
     service,
     mine,
 }
+
+Vue.prototype.$api = api

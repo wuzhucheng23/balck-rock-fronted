@@ -1,13 +1,13 @@
-import axios from '@/plugins/axios'
+import axiosInstance from '@/api/axios-instance'
 
-const service =  {
-    async getFaq (params) {
+const service = {
+    async getFaq(params) {
         const url = '/api/info/getFaq'
-        return await axios.get(url, { params })
+        return await axiosInstance.get(url, {params})
     },
-    async getCustomer (params) {
+    async getCustomer(params) {
         const url = '/api/info/getCustomer'
-        return await axios.get(url, { params })
+        return await axiosInstance.get(url, {params})
     },
 }
 

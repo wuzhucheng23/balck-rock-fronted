@@ -1,17 +1,26 @@
 <template>
   <div class="setting-up  sub-page">
-    <nav-bar :title="$t('设置')"></nav-bar>
+    <nav-bar :title="$t('设置')"/>
     <div class="container">
       <div class="set-box">
-        <div class="set-item" v-for="item in setList" :key="item.title" @click="handleClick(item)">
+        <div class="set-item"
+             v-for="item in setList"
+             :key="item.title"
+             @click="handleClick(item)">
           <span>{{ item.title }}</span>
-          <van-image :src="require('@/assets/mine/right-arrow-icon.png')"></van-image>
+          <van-image :src="require('@/assets/mine/right-arrow-icon.png')"/>
         </div>
       </div>
     </div>
-    <van-dialog v-model="visible" :show-confirm-button="false" width="305px">
+    <van-dialog
+        v-model="visible"
+        width="305px"
+        :show-confirm-button="false">
       <div class="dialog-container">
-        <van-image :src="require('@/assets/mine/close-icon.png')" class="close-icon" @click="handleClose"></van-image>
+        <van-image
+            :src="require('@/assets/mine/close-icon.png')" class="close-icon"
+            @click="visible = false"
+        />
         <div class="title">{{ type === 'login' ? $t('登陆密码') : $t('取款密码') }}</div>
         <div class="field-box">
           <div class="title">{{ type === 'login' ? $t('旧密码') : $t('密码') }}</div>
@@ -19,7 +28,10 @@
           <div class="title">{{ type === 'login' ? $t('新密码') : $t('确认密码') }}</div>
           <van-field v-model="newPwd" type="password" :placeholder="$t('请输入')"></van-field>
           <div class="forget-text">
-            <span v-if="type === 'login'" @click="handleToUpdatePassword">{{ $t('忘记密码') }}</span>
+            <span v-if="type === 'login'"
+                  @click="$utils.toRoute('ForgetPassword', '忘记密码')">
+              {{ $t('忘记密码') }}
+            </span>
           </div>
         </div>
         <div class="btn-box">
@@ -32,7 +44,7 @@
 
 <script>
 export default {
-  name: "setting-up",
+  name: "SettingUp",
   data() {
     const setList = [
       {
@@ -45,7 +57,7 @@ export default {
       },
       {
         title: this.$t('语言设置'),
-        name: 'languageSet'
+        name: 'LanguageSet'
       },
     ]
     return {
@@ -58,19 +70,13 @@ export default {
   },
   methods: {
     handleClick(item) {
-      if (item.name !== 'languageSet') {
+      if (item.name !== 'LanguageSet') {
         this.type = item.name === 'updateLoginPwd' ? 'login' : 'withdraw'
         return this.visible = true
       }
-      this.$router.push({
-        name: item.name,
-        label: item.title
-      })
+      this.$utils.toRoute(item.name, item.title)
     },
-    handleClose () {
-      this.visible = false
-    },
-    async handleUpdate () {
+    async handleUpdate() {
       if (!this.oldPwd) return this.$toast(this.$t('请填写完整密码信息'))
       if (!this.newPwd) return this.$toast(this.$t('请填写完整密码信息'))
       if (this.type === 'login') {
@@ -112,12 +118,6 @@ export default {
           this.buttonLoading = false
         }
       }
-    },
-    handleToUpdatePassword () {
-      this.$router.push({
-        name: 'forgetPassword',
-        label: '忘记密码'
-      })
     }
   },
 }
@@ -138,13 +138,11 @@ export default {
       justify-content: space-between;
       align-items: center;
       padding: 0 15px;
+
       span {
         font-family: PingFang-SC-Medium;
         font-size: 14px;
-        font-weight: normal;
-        font-stretch: normal;
         line-height: 14px;
-        letter-spacing: 0px;
         color: #333333;
       }
 
@@ -157,8 +155,9 @@ export default {
         position: absolute;
         left: 15px;
         right: 15px;
-        bottom: 0px;
+        bottom: 0;
       }
+
       .van-image {
         width: 10px;
         height: 18px;
@@ -166,26 +165,27 @@ export default {
     }
   }
 }
+
 .van-dialog {
   border-radius: 10px;
 }
+
 .dialog-container {
   height: 305px;
   background-color: #ffffff;
   border-radius: 10px;
   padding: 15px;
   position: relative;
+
   .title {
     font-family: PingFang-SC-Bold;
     font-size: 16px;
-    font-weight: normal;
-    font-stretch: normal;
-    letter-spacing: 0px;
     line-height: 16px;
     color: #333333;
     text-align: center;
     margin-bottom: 25px;
   }
+
   .close-icon {
     position: absolute;
     right: 15px;
@@ -193,41 +193,41 @@ export default {
     width: 13px;
     height: 13px;
   }
+
   .field-box {
     .title {
       font-family: PingFang-SC-Medium;
       font-size: 14px;
-      font-weight: normal;
-      font-stretch: normal;
-      letter-spacing: 0px;
       color: #333333;
       line-height: 14px;
       margin-bottom: 10px;
       text-align: left;
     }
+
     .van-cell {
       height: 48px;
       background-color: #f5f5f5;
       border-radius: 10px;
     }
+
     .van-field {
       margin-bottom: 10px;
     }
+
     .forget-text {
       text-align: right;
       margin-bottom: 9px;
       height: 12px;
+
       span {
         font-family: PingFang-SC-Medium;
         text-decoration: underline;
         font-size: 12px;
-        font-weight: normal;
-        font-stretch: normal;
-        letter-spacing: 0px;
         color: #999999;
       }
     }
   }
+
   .btn-box {
     .van-button {
       height: 44px;
@@ -235,10 +235,7 @@ export default {
       border-radius: 22px;
       font-family: PingFang-SC-Medium;
       font-size: 14px;
-      font-weight: normal;
-      font-stretch: normal;
       line-height: 12px;
-      letter-spacing: 0px;
       color: #ffffff;
     }
   }

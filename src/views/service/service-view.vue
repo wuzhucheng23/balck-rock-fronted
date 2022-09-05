@@ -6,7 +6,7 @@
 
 <script>
 export default {
-  name: "service-view"
+  name: "ServiceView"
 }
 </script>
 

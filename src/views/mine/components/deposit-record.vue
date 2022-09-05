@@ -1,8 +1,16 @@
 <template>
   <div class="deposit-record sub-page">
-    <nav-bar :title="$t('押金记录')"></nav-bar>
+    <nav-bar :title="$t('押金记录')"/>
     <div class="container">
       <div class="record-box">
+        <van-loading
+            v-if="loading"
+            type="spinner"
+            size="24px"
+            style="padding: 15px 0;text-align: center">
+          {{ $t('加载中...') }}
+        </van-loading>
+        <van-empty :description="$t('空空如也')" v-if="isEmpty"/>
         <div class="record-item" v-for="item in recordList" :key="item.id">
           <div class="left-wrap">
             <div class="name" v-if="item.status === 0">{{ $t('支付押金') }}</div>
@@ -23,10 +31,16 @@
 
 <script>
 export default {
-  name: "deposit-record",
+  name: "DepositRecord",
   data() {
     return {
-      recordList: []
+      recordList: [],
+      loading: false
+    }
+  },
+  computed: {
+    isEmpty() {
+      return this.recordList.length === 0 && !this.loading
     }
   },
   created() {
@@ -57,8 +71,10 @@ export default {
 .container {
   height: calc(100% - 50px);
   overflow: auto;
+
   .record-box {
     padding: 10px 0;
+
     .record-item {
       height: 63px;
       background-color: #ffffff;
@@ -66,57 +82,48 @@ export default {
       padding: 15px;
       display: flex;
       justify-content: space-between;
+
       .name {
         font-family: PingFang-SC-Medium;
         font-size: 12px;
-        font-weight: normal;
-        font-stretch: normal;
-        letter-spacing: 0px;
         color: #333333;
         margin-bottom: 10px;
         line-height: 12px;
       }
+
       .time {
         font-family: PingFang-SC-Medium;
         font-size: 12px;
-        font-weight: normal;
-        font-stretch: normal;
-        letter-spacing: 0px;
         color: #999999;
         line-height: 12px;
       }
+
       .pay {
         font-family: PingFang-SC-Medium;
         font-size: 12px;
-        font-weight: normal;
-        font-stretch: normal;
-        letter-spacing: 0px;
         color: #999999;
         margin-bottom: 10px;
         line-height: 12px;
         text-align: right;
       }
+
       .backing {
         font-family: PingFang-SC-Medium;
         font-size: 12px;
-        font-weight: normal;
-        font-stretch: normal;
-        letter-spacing: 0px;
         color: #fc6324;
         margin-bottom: 10px;
         line-height: 12px;
         text-align: right;
       }
+
       .money {
         font-family: PingFang-SC-Medium;
         font-size: 12px;
-        font-weight: normal;
-        font-stretch: normal;
-        letter-spacing: 0px;
         color: #f98b65;
         line-height: 12px;
         text-align: right;
       }
+
       &:last-child {
         margin-bottom: 0;
       }

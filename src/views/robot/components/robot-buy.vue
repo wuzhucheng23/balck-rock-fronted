@@ -1,6 +1,6 @@
 <template>
   <div class="robot-buy sub-page">
-    <nav-bar :title="$t('方案买入')"></nav-bar>
+    <nav-bar :title="$t('方案买入')"/>
     <div class="container">
       <div class="info-box">
         <div class="title">{{ $t('买入') }}</div>
@@ -17,7 +17,13 @@
           </div>
           <div class="field-wrap">
             <div class="text">{{ $t('买入金额') }}</div>
-            <van-field v-model="money" type="number" :placeholder="$t('请输入购买金额')" label="$" label-width="25px"></van-field>
+            <van-field
+                v-model="money"
+                type="number"
+                label="$"
+                label-width="25px"
+                :placeholder="$t('请输入购买金额')"
+            />
           </div>
           <div class="money-wrap">
             <div class="left">
@@ -26,14 +32,22 @@
             </div>
             <div class="right">
               <span>{{ $t('手续费') }}：</span>
-              <span class="money">${{ (money * robotInfo.shouxu).toFixed(2) }}</span>
+              <span class="money">
+                ${{ (money * robotInfo.shouxu).toFixed(2) }}
+              </span>
             </div>
           </div>
         </div>
       </div>
       <div class="btn-box">
-        <van-button block @click="handleBuy" :loading="buttonLoading"
-                    loading-type="spinner" :loading-text="$t('正在购买...')">{{ $t('购买') }}</van-button>
+        <van-button
+            block
+            loading-type="spinner"
+            :loading="buttonLoading"
+            :loading-text="$t('正在购买...')"
+            @click="handleBuy">
+          <span>{{ $t('购买') }}</span>
+        </van-button>
       </div>
       <div class="tip-box">
         <div class="title">{{ $t('购买说明') }}：</div>
@@ -41,18 +55,25 @@
         </div>
       </div>
     </div>
-    <result-dialog :visible.sync="showResult" :result="$t('购买成功')" :btn="false" :desc="$t('正在跳转页面...')"></result-dialog>
+    <result-dialog
+        :visible.sync="showResult"
+        :result="$t('购买成功')"
+        :btn="false"
+        :desc="$t('正在跳转页面...')"
+    />
   </div>
 </template>
 
 <script>
 export default {
-  name: "robot-buy",
+  name: "RobotBuy",
   data() {
     return {
       money: '',
       balance: '0.00',
-      robotInfo: {},
+      robotInfo: {
+        shouxu: 0
+      },
       detail: '',
       buttonLoading: false,
       showResult: false
@@ -64,19 +85,12 @@ export default {
     }
   },
   created() {
-    this.getRobotList()
     this.getRobotDesc()
+    this.getRobotList()
   },
   methods: {
-    handleToDeposit () {
-      this.$router.push({
-        name: 'robotDeposit',
-        label: '机器转入'
-      })
-    },
     async getRobotDesc() {
       try {
-        this.loading = true
         const resp = await this.$api.robot.getRobotDesc();
         if (resp.code === 1) {
           const data = resp.data
@@ -86,13 +100,10 @@ export default {
         }
       } catch (e) {
         this.$toast.fail(this.$t('发生错误'));
-      } finally {
-        this.loading = false
       }
     },
     async getRobotList() {
       try {
-        this.loading = true
         const resp = await this.$api.robot.robotList();
         if (resp.code === 1) {
           const data = resp.data
@@ -103,12 +114,10 @@ export default {
         }
       } catch (e) {
         this.$toast.fail(this.$t('发生错误'));
-      } finally {
-        this.loading = false
       }
     },
-    async handleBuy () {
-      if (!this.money) return  this.$toast(this.$t('请输入购买金额'))
+    async handleBuy() {
+      if (!this.money) return this.$toast(this.$t('请输入购买金额'))
       try {
         this.buttonLoading = true
         const params = {
@@ -117,7 +126,6 @@ export default {
         }
         const resp = await this.$api.robot.addRobot(params);
         if (resp.code === 1) {
-          // this.$toast.success(this.$t('购买成功'))
           this.showResult = true
           this.$utils.delayBack()
         } else {
@@ -139,25 +147,25 @@ export default {
   overflow: auto;
   background: #f6d79b;
   padding: 15px;
+
   .info-box {
     .title {
       font-family: PingFang-SC-Bold;
       font-size: 20px;
-      font-weight: normal;
-      font-stretch: normal;
-      letter-spacing: 0px;
       color: #333333;
       line-height: 20px;
       margin-top: 15px;
       margin-bottom: 25px;
       text-align: center;
     }
+
     .content {
       height: 203px;
       background-color: #ffffff;
       border-radius: 10px;
       margin-bottom: 20px;
       padding: 15px 20px;
+
       .top-wrap {
         height: 65px;
         background-color: #f6f6f6;
@@ -167,74 +175,67 @@ export default {
         justify-content: space-between;
         text-align: center;
         margin-bottom: 20px;
+
         .top-text {
           font-family: PingFang-SC-Medium;
           font-size: 12px;
-          font-weight: normal;
-          font-stretch: normal;
           line-height: 12px;
-          letter-spacing: 0px;
           color: #666666;
           margin-bottom: 13px;
         }
+
         .bottom-text {
           font-family: PingFang-SC-Bold;
           font-size: 16px;
-          font-weight: normal;
-          font-stretch: normal;
           line-height: 12px;
-          letter-spacing: 0px;
           color: #333333;
         }
       }
+
       .field-wrap {
         margin-bottom: 10px;
+
         .text {
           font-family: PingFang-SC-Medium;
           font-size: 14px;
-          font-weight: normal;
-          font-stretch: normal;
           line-height: 14px;
-          letter-spacing: 0px;
           color: #333333;
           margin-bottom: 12px;
         }
+
         .van-cell {
           padding: 0 0 5px;
           border-bottom: 1px solid #f6f6f6;
         }
+
         ::v-deep .van-field__label {
           font-family: PingFang-SC-Medium;
           font-size: 18px;
-          font-weight: normal;
-          font-stretch: normal;
           line-height: 19px;
           letter-spacing: 0px;
           color: #333333;
         }
       }
+
       .money-wrap {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        .left,.right {
+
+        .left, .right {
           font-family: PingFang-SC-Medium;
           font-size: 12px;
-          font-weight: normal;
-          font-stretch: normal;
           line-height: 12px;
-          letter-spacing: 0px;
           color: #999999;
+
           .money {
             font-family: PingFang-SC-Medium;
             font-size: 12px;
-            font-weight: normal;
-            font-stretch: normal;
             line-height: 12px;
-            letter-spacing: 0px;
             color: #fc6324;
           }
         }
+
         .right {
           .van-button {
             width: 59px;
@@ -243,9 +244,6 @@ export default {
             border-radius: 10px;
             font-family: PingFang-SC-Medium;
             font-size: 11px;
-            font-weight: normal;
-            font-stretch: normal;
-            letter-spacing: 0px;
             color: #333333;
             border-color: #f0d3a2;
           }
@@ -253,30 +251,28 @@ export default {
       }
     }
   }
+
   .btn-box {
     margin-bottom: 20px;
+
     .van-button {
       height: 48px;
       background-color: #fc6324;
       border-radius: 10px;
       font-family: PingFang-SC-Medium;
       font-size: 14px;
-      font-weight: normal;
-      font-stretch: normal;
       line-height: 12px;
-      letter-spacing: 0px;
       color: #ffffff;
       border-color: #fc6324;
     }
   }
+
   .tip-box {
     font-family: PingFang-SC-Medium;
     font-size: 12px;
-    font-weight: normal;
-    font-stretch: normal;
     line-height: 16px;
-    letter-spacing: 0px;
     color: #333333;
+
     .title {
       margin-bottom: 12px;
     }

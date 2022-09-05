@@ -1,6 +1,6 @@
 <template>
   <div class="vip-introduce sub-page">
-    <nav-bar :title="$t('vip等级介绍')"></nav-bar>
+    <nav-bar :title="$t('vip等级介绍')"/>
     <div class="container">
       <div class="introduce-box">
         <div class="content" v-html="detail">
@@ -12,7 +12,7 @@
 
 <script>
 export default {
-  name: "vip-introduce",
+  name: "VipIntroduce",
   data() {
     return {
       detail: ''
@@ -24,7 +24,6 @@ export default {
   methods: {
     async vipRules() {
       try {
-        this.loading = true
         const resp = await this.$api.mine.vipRules();
         if (resp.code === 1) {
           const data = resp.data
@@ -34,8 +33,6 @@ export default {
         }
       } catch (e) {
         this.$toast.fail(this.$t('发生错误'));
-      } finally {
-        this.loading = false
       }
     },
   }
@@ -54,10 +51,7 @@ export default {
     padding: 15px;
     font-family: PingFang-SC-Medium;
     font-size: 14px;
-    font-weight: normal;
-    font-stretch: normal;
     line-height: 18px;
-    letter-spacing: 0px;
     color: #333333;
     text-align: justify;
   }

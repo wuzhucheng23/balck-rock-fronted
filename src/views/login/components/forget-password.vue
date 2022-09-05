@@ -1,26 +1,15 @@
 <template>
   <div class="forget-password sub-page">
-    <nav-bar :title="$t('忘记密码')"></nav-bar>
+    <nav-bar :title="$t('忘记密码')"/>
     <div class="container">
       <div class="info-box">
         <div class="content">
-<!--          <div class="content-item">-->
-<!--            <div class="text">{{ $t('电话号码') }}</div>-->
-<!--            <div class="value">-->
-<!--              <van-field v-model="phone" :placeholder="$t('请输入电话号码')" type="text">-->
-<!--                <template #label>-->
-<!--                  <span @click="handleShowCode" class="label-code">+{{ areaCode }}</span>-->
-<!--                </template>-->
-<!--              </van-field>-->
-<!--            </div>-->
-<!--          </div>-->
           <div class="content-item">
             <div class="text">
-<!--              <van-image :src="require('@/assets/login/email-icon.png')"></van-image>-->
               <span>{{ $t('邮箱') }}</span>
             </div>
             <div class="value">
-              <van-field v-model="email" :placeholder="$t('请输入邮箱')" type="text"></van-field>
+              <van-field v-model="email" :placeholder="$t('请输入邮箱')" type="text"/>
             </div>
           </div>
           <div class="content-item">
@@ -28,14 +17,20 @@
             <div class="value">
               <van-field v-model="certificateCode" type="text" :placeholder="$t('请输入验证码')">
                 <template #button>
-                  <van-button class="get-code"
-                              @click="handleSendOpt"
-                              :loading="optLoading"
-                              loading-type="spinner"
-                              :loading-text="$t('正在获取...')"
-                              :disabled="disabledSend">
+                  <van-button
+                      class="get-code"
+                      loading-type="spinner"
+                      :loading="optLoading"
+                      :loading-text="$t('正在获取...')"
+                      :disabled="disabledSend"
+                      @click="handleSendOpt">
                     <span v-if="!disabledSend">{{ $t('获取验证码') }}</span>
-                    <van-count-down :time="time" format="ss s" v-else @finish="handleFinish"/>
+                    <van-count-down
+                        v-else
+                        format="ss s"
+                        :time="time"
+                        @finish="disabledSend = false"
+                    />
                   </van-button>
                 </template>
               </van-field>
@@ -44,35 +39,34 @@
           <div class="content-item">
             <div class="text">{{ $t('新密码') }}</div>
             <div class="value">
-              <van-field v-model="newPwd" type="password" :placeholder="$t('请输入新密码')"></van-field>
+              <van-field v-model="newPwd" type="password" :placeholder="$t('请输入新密码')"/>
             </div>
           </div>
           <div class="content-item">
             <div class="text">{{ $t('确认新密码') }}</div>
             <div class="value">
-              <van-field v-model="repeatNewPwd" type="password" :placeholder="$t('请输入确认新密码')"></van-field>
+              <van-field v-model="repeatNewPwd" type="password" :placeholder="$t('请输入确认新密码')"/>
             </div>
           </div>
         </div>
       </div>
       <div class="btn-box">
-        <van-button block @click="handleUpdatePassword" :loading="loading"
-                    loading-type="spinner" :loading-text="$t('正在修改...')">{{ $t('确定') }}</van-button>
+        <van-button
+            block
+            loading-type="spinner"
+            :loading="loading"
+            :loading-text="$t('正在修改...')"
+            @click="handleUpdatePassword">
+          <span>{{ $t('确定') }}</span>
+        </van-button>
       </div>
     </div>
-    <result-dialog :visible.sync="visible" :result="$t('修改成功')" :btn="false" :desc="$t('正在跳转页面...')"></result-dialog>
-    <van-popup v-model="visiblePopup" round position="bottom">
-      <van-picker
-          show-toolbar
-          :columns="columns"
-          :default-index="defaultIndex"
-          :loading="initLoading"
-          :confirm-button-text="$t('确定')"
-          :cancel-button-text="$t('取消')"
-          @cancel="handleCancel"
-          @confirm="handleConfirm"
-      />
-    </van-popup>
+    <result-dialog
+        :visible.sync="visible"
+        :result="$t('修改成功')"
+        :btn="false"
+        :desc="$t('正在跳转页面...')"
+    />
   </div>
 </template>
 
@@ -90,30 +84,17 @@ export default {
       optLoading: false,
       loading: false,
       visible: false,
-      phone: '',
-      visiblePopup: false,
-      columns: [],
-      areaCodeList: [],
-      defaultIndex: 0,
-      initLoading: false,
-      areaCode: '',
     }
-  },
-  created() {
-    // this.getAreaCode()
   },
   methods: {
     async handleSendOpt() {
-      // if (!this.phone) return this.$toast(this.$t('请输入电话号码'))
       if (!this.email) return this.$toast(this.$t('请输入邮箱'))
-      this.optLoading = true
       const params = {
-        // tel: this.phone,
-        // areaId: this.areaCodeList.find(item => item.area_code === this.areaCode).id,
         email: this.email,
         type: 4,
       }
       try {
+        this.optLoading = true
         const res = await this.$api.login.emailVerify(params)
         if (res.code === 1) {
           this.$toast.success(res.msg)
@@ -127,26 +108,7 @@ export default {
         this.optLoading = false
       }
     },
-    async getAreaCode () {
-      try {
-        // this.loading = true
-        const resp = await this.$api.login.getAreaCode();
-        if (resp.code === 1) {
-          const data = resp.data
-          this.areaCodeList = data
-          this.columns = data.map(item => item.area_code)
-          if (data.length > 0) this.areaCode = data[0].area_code
-        } else {
-          this.$toast.fail(resp.msg || resp.message)
-        }
-      } catch (e) {
-        this.$toast.fail(this.$t('发生错误'));
-      } finally {
-        // this.loading = false
-      }
-    },
-    async handleUpdatePassword () {
-      // if (!this.phone) return this.$toast(this.$t('请输入电话号码'))
+    async handleUpdatePassword() {
       if (!this.email) return this.$toast(this.$t('请输入邮箱'))
       if (!this.certificateCode) return this.$toast(this.$t('请输入验证码'))
       if (!this.newPwd) return this.$toast(this.$t('请输入新密码'))
@@ -155,7 +117,6 @@ export default {
       if (this.newPwd !== this.repeatNewPwd) return this.$toast(this.$t('新密码与确认新密码不一致'))
       this.loading = true
       const params = {
-        // tel: this.areaCode + this.phone,
         tel: this.email,
         verify_code: this.certificateCode,
         password: this.newPwd,
@@ -164,7 +125,6 @@ export default {
       try {
         const res = await this.$api.login.changePwd(params)
         if (res.code === 1) {
-          // this.$toast.success(res.msg)
           this.visible = true
           this.$utils.delayBack()
         } else {
@@ -175,20 +135,7 @@ export default {
       } finally {
         this.loading = false
       }
-    },
-    handleFinish () {
-      this.disabledSend = false
-    },
-    handleShowCode () {
-      this.visiblePopup = true
-    },
-    handleCancel () {
-      this.visiblePopup = false;
-    },
-    handleConfirm (value) {
-      this.areaCode = value
-      this.handleCancel();
-    },
+    }
   },
 }
 </script>
@@ -198,8 +145,10 @@ export default {
   padding-top: 15px;
   height: calc(100% - 50px);
   overflow: auto;
+
   .info-box {
     margin-bottom: 30px;
+
     .content {
       .content-item {
         .text {
@@ -214,8 +163,10 @@ export default {
           padding-left: 20px;
           background: #ffffff;
         }
+
         .van-cell {
           padding-left: 21px;
+
           &::after {
             content: '';
             display: block;
@@ -228,7 +179,8 @@ export default {
             bottom: 0px;
           }
         }
-        ::v-deep .van-field .van-field__control{
+
+        ::v-deep .van-field .van-field__control {
           font-family: PingFang-SC-Medium;
           font-size: 16px;
           font-weight: normal;
@@ -237,6 +189,7 @@ export default {
           color: #333333;
         }
       }
+
       .get-code {
         width: 88px;
         height: 27px;
@@ -257,8 +210,10 @@ export default {
       }
     }
   }
+
   .btn-box {
     padding: 0 15px 15px;
+
     .van-button {
       height: 48px;
       background-color: #fc6324;
@@ -273,6 +228,7 @@ export default {
     }
   }
 }
+
 ::v-deep .van-loading--spinner {
   position: relative;
   top: -1px;

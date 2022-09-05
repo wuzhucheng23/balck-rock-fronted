@@ -6,7 +6,7 @@
 
 <script>
 export default {
-  name: "robot-view"
+  name: "RobotView"
 }
 </script>
 

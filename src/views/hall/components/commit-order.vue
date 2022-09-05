@@ -1,32 +1,13 @@
 <template>
   <div class="commit-order sub-page">
     <div class="container">
-      <nav-bar :title="$t('提交任务')" background-color="transparent">
-<!--        <template #right>-->
-<!--          <van-image :src="require('@/assets/mine/refresh-icon.png')" @click="handleRefresh"></van-image>-->
-<!--        </template>-->
-      </nav-bar>
-      <!--      <div class="address-box" @click="handleToAddress">-->
-      <!--        <van-image :src="require('@/assets/hall/address-icon.png')" class="address-icon"></van-image>-->
-      <!--        <div class="text-wrap">-->
-      <!--          <div>-->
-      <!--            <span class="tel-text">{{ address.tel }}</span>-->
-      <!--            <span>{{ address.name }}</span>-->
-      <!--          </div>-->
-      <!--          <div>{{ address.address }}</div>-->
-      <!--        </div>-->
-      <!--        <van-image :src="require('@/assets/hall/right-arrow-icon.png')" class="arrow-icon"></van-image>-->
-      <!--      </div>-->
+      <nav-bar :title="$t('提交任务')" background-color="transparent"/>
       <div class="top-info-box">
-        <div class="title">
-          {{ $t('任务号') }}:{{ id }}
-        </div>
+        <div class="title">{{ $t('任务号') }}:{{ id }}</div>
         <div class="img-wrap">
-          <van-image :src="goodsPic"></van-image>
+          <van-image :src="goodsPic"/>
         </div>
-        <div class="name">
-          {{ goodsName }}
-        </div>
+        <div class="name">{{ goodsName }}</div>
         <div class="price">$ {{ goodsPrice }}</div>
       </div>
       <div class="bottom-info-box">
@@ -38,46 +19,41 @@
               :class="[{'main-color': item.id === 1}, {'red-color': item.id === 9}]"
               :value="item.value"/>
         </van-cell-group>
-        <van-image :src="require('@/assets/hall/nonclick-love-icon.png')" class="love-icon" @click="handleClickLove" v-if="!isClickLove"></van-image>
-        <van-image :src="require('@/assets/hall/click-love-icon.png')" class="love-icon" v-else></van-image>
-        <!--        <van-slider-->
-        <!--            v-model="value"-->
-        <!--            bar-height="6px"-->
-        <!--            inactive-color="#eeeeee"-->
-        <!--            active-color="#ff6c1e"-->
-        <!--            disabled-->
-        <!--            button-size="0"-->
-        <!--            :max="max"/>-->
+        <van-image
+            v-if="!isClickLove"
+            :src="require('@/assets/hall/nonclick-love-icon.png')"
+            class="love-icon"
+            @click="handleClickLove"
+        />
+        <van-image
+            v-else
+            :src="require('@/assets/hall/click-love-icon.png')"
+            class="love-icon"
+        />
       </div>
       <div class="btn-box">
-        <van-button block @click="handleCommit" :disabled="!isClickLove">{{ $t('提交任务') }}</van-button>
+        <van-button block :disabled="!isClickLove" @click="visible = true">
+          <span>{{ $t('提交任务') }}</span>
+        </van-button>
       </div>
-      <!--      <div class="complete-box">-->
-      <!--        <div class="img-wrap">-->
-      <!--          <van-image :src="require('@/assets/hall/complete-icon.png')"></van-image>-->
-      <!--        </div>-->
-      <!--        <div class="text-wrap">-->
-      <!--          <span>{{ $t('当您完成') }}</span>-->
-      <!--          <span> {{ max }} </span>-->
-      <!--          <span>{{ $t('个订单后，点击“结算佣金”按钮，系统会将您今天的利润添加到您的余额中。') }}</span>-->
-      <!--        </div>-->
-      <!--        <div class="btn-wrap">-->
-      <!--          <van-button block @click="handleComplete">{{ $t('结算佣金') }}</van-button>-->
-      <!--        </div>-->
-      <!--      </div>-->
     </div>
     <van-dialog v-model="visible" :show-confirm-button="false">
       <div class="dialog-container">
         <div class="title">{{ $t('确认任务') }}</div>
         <div class="text">{{ $t('我已确认任务信息正确') }}</div>
         <div class="btn-wrap">
-          <van-button @click="handleCancel">{{ $t('取消') }}</van-button>
+          <van-button @click="visible = false">{{ $t('取消') }}</van-button>
           <van-button @click="handleConfirm">{{ $t('确认') }}</van-button>
         </div>
       </div>
     </van-dialog>
-    <van-image :src="require('@/assets/hall/click-like.gif')" class="click-like-gif" v-if="isClickLike"></van-image>
-    <result-dialog :visible.sync="showResult" :result="$t('提交成功')" :btn="false" :desc="$t('正在跳转页面...')"></result-dialog>
+    <van-image :src="require('@/assets/hall/click-like.gif')" class="click-like-gif" v-if="isClickLike"/>
+    <result-dialog
+        :visible.sync="showResult"
+        :result="$t('提交成功')"
+        :btn="false"
+        :desc="$t('正在跳转页面...')"
+    />
   </div>
 </template>
 
@@ -91,11 +67,6 @@ export default {
         title: this.$t('类别'),
         value: '',
       },
-      // {
-      //   id: 2,
-      //   title: this.$t('日利润'),
-      //   value: '0%',
-      // },
       {
         id: 3,
         title: this.$t('余额'),
@@ -111,21 +82,6 @@ export default {
         title: this.$t('一次获利'),
         value: '$ 0.00',
       },
-      // {
-      //   id: 6,
-      //   title: this.$t('今天未确定的利润'),
-      //   value: '$ 0',
-      // },
-      // {
-      //   id: 7,
-      //   title: this.$t('今日设定利润'),
-      //   value: '$ 0',
-      // },
-      // {
-      //   id: 8,
-      //   title: this.$t('完成进度条'),
-      //   value: '0/0',
-      // },
       {
         id: 9,
         title: this.$t('请点赞'),
@@ -136,7 +92,6 @@ export default {
       cellList,
       value: 0,
       max: 50,
-      loading: false,
       id: '',
       goodsPic: '',
       goodsName: '',
@@ -154,7 +109,6 @@ export default {
     }
   },
   created() {
-    console.log(this.$route.query.info)
     this.init()
   },
   methods: {
@@ -166,41 +120,18 @@ export default {
       this.goodsName = data.goods_name
       this.goodsPrice = data.goods_price
       this.cellList[0].value = data.cate
-      // this.cellList[1].value = data.rate + '%'
       this.cellList[1].value = '$ ' + data.balance
       this.cellList[2].value = data.count
       this.cellList[3].value = '$ ' + data.profit
-      // this.cellList[5].value = '$ ' + data.today_unsettled
-      // this.cellList[6].value = '$ ' + data.today_unsettled
-      // this.cellList[7].value = data.deal_count + '/' + data.total_task
       this.value = data.deal_count
       this.max = data.total_task
     },
-    handleRefresh() {
-      this.address = {}
-      this.id = ''
-      this.goodsPic = ''
-      this.goodsName = ''
-      this.goodsPrice = '0.00'
-      this.cellList[0].value = ''
-      this.cellList[1].value = '0' + '%'
-      this.cellList[2].value = '$ ' + '0.00'
-      this.cellList[3].value = 0
-      this.cellList[4].value = '$ ' + 0
-      this.cellList[5].value = '$ ' + '0.00'
-      this.cellList[6].value = '$ ' + '0.00'
-      this.cellList[7].value = 0 + '/' + 0
-      this.value = 0
-      this.max = 0
+    handleClickLove() {
+      this.isClickLove = true
+      this.isClickLike = true
       setTimeout(() => {
-        this.init();
-      }, 500)
-    },
-    handleCommit() {
-      this.visible = true
-    },
-    handleCancel() {
-      this.visible = false
+        this.isClickLike = false
+      }, 1800)
     },
     async handleConfirm() {
       try {
@@ -217,32 +148,6 @@ export default {
         this.$toast.fail(this.$t('发生错误'));
       }
     },
-    async handleComplete() {
-      try {
-        const params = {goods_id: this.id}
-        const resp = await this.$api.hall.settlement(params);
-        if (resp.code === 1) {
-          this.$toast.success(this.$t('结算成功'))
-        } else {
-          this.$toast.fail(resp.msg || resp.message)
-        }
-      } catch (e) {
-        this.$toast.fail(this.$t('发生错误'));
-      }
-    },
-    // handleToAddress() {
-    //   this.$router.push({
-    //     name: 'shippingAddress',
-    //     label: '收货地址'
-    //   })
-    // }
-    handleClickLove () {
-      this.isClickLove = true
-      this.isClickLike = true
-      setTimeout(() => {
-        this.isClickLike = false
-      }, 1800)
-    }
   },
 }
 </script>
@@ -250,7 +155,6 @@ export default {
 <style scoped lang="less">
 .commit-order {
   overflow: auto;
-  //height: 100vh;
 }
 
 .nav-bar {
@@ -293,9 +197,6 @@ export default {
         font-family: PingFang-SC-Medium;
         font-size: 12px;
         line-height: 12px;
-        font-weight: normal;
-        font-stretch: normal;
-        letter-spacing: 0px;
         color: #333333;
         margin-bottom: 8px;
         margin-top: 6px;
@@ -305,9 +206,6 @@ export default {
         font-family: PingFang-SC-Medium;
         font-size: 12px;
         line-height: 12px;
-        font-weight: normal;
-        font-stretch: normal;
-        letter-spacing: 0px;
         color: #999999;
       }
     }
@@ -343,9 +241,6 @@ export default {
     .title {
       font-family: PingFang-SC-Medium;
       font-size: 12px;
-      font-weight: normal;
-      font-stretch: normal;
-      letter-spacing: 0px;
       color: #333333;
       line-height: 12px;
       margin-bottom: 10px;
@@ -354,6 +249,7 @@ export default {
     .img-wrap {
       text-align: center;
       margin-bottom: 24px;
+
       .van-image {
         width: 120px;
         height: 143px;
@@ -363,10 +259,7 @@ export default {
     .name {
       font-family: PingFang-SC-Medium;
       font-size: 12px;
-      font-weight: normal;
-      font-stretch: normal;
       line-height: 18px;
-      letter-spacing: 0px;
       color: #333333;
       text-align: center;
       padding: 0 50px;
@@ -376,10 +269,7 @@ export default {
     .price {
       font-family: PingFang-SC-Bold;
       font-size: 18px;
-      font-weight: normal;
-      font-stretch: normal;
       line-height: 18px;
-      letter-spacing: 0px;
       color: #e98d00;
       text-align: center;
     }
@@ -417,18 +307,12 @@ export default {
     flex: unset;
     font-family: PingFang-SC-Medium;
     font-size: 12px;
-    font-weight: normal;
-    font-stretch: normal;
-    letter-spacing: 0px;
     color: #333333;
   }
 
   ::v-deep .van-cell__value {
     font-family: PingFang-SC-Medium;
     font-size: 12px;
-    font-weight: normal;
-    font-stretch: normal;
-    letter-spacing: 0px;
     color: #333333;
   }
 
@@ -455,9 +339,6 @@ export default {
       border-radius: 10px;
       font-family: PingFang-SC-Medium;
       font-size: 14px;
-      font-weight: normal;
-      font-stretch: normal;
-      letter-spacing: 0px;
       color: #ffffff;
 
     }
@@ -482,10 +363,7 @@ export default {
     .text-wrap {
       font-family: PingFang-SC-Medium;
       font-size: 12px;
-      font-weight: normal;
-      font-stretch: normal;
       line-height: 18px;
-      letter-spacing: 0px;
       color: #333333;
       width: 280px;
       height: 36px;
@@ -502,14 +380,12 @@ export default {
         border-radius: 23px;
         font-family: PingFang-SC-Medium;
         font-size: 14px;
-        font-weight: normal;
-        font-stretch: normal;
-        letter-spacing: 0px;
         color: #ffffff;
         margin: 0 auto;
       }
     }
   }
+
   ::v-deep .red-color .van-cell__title {
     color: #f80a2b;
   }
@@ -526,9 +402,6 @@ export default {
   .title {
     font-family: PingFang-SC-Bold;
     font-size: 18px;
-    font-weight: normal;
-    font-stretch: normal;
-    letter-spacing: 0px;
     color: #333333;
     line-height: 18px;
     margin-bottom: 52px;
@@ -538,10 +411,7 @@ export default {
     height: 14px;
     font-family: PingFang-SC-Medium;
     font-size: 14px;
-    font-weight: normal;
-    font-stretch: normal;
     line-height: 18px;
-    letter-spacing: 0px;
     color: #333333;
     margin-bottom: 72px;
   }
@@ -558,9 +428,6 @@ export default {
       border-radius: 10px;
       font-family: PingFang-SC-Bold;
       font-size: 18px;
-      font-weight: normal;
-      font-stretch: normal;
-      letter-spacing: 0px;
       color: #ffffff;
     }
   }

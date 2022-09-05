@@ -2,14 +2,20 @@
   <div class="deposit-manage sub-page">
     <nav-bar :title="$t('押金管理')">
       <template #right>
-        <span class="money-rule" @click="handleToMoneyRule">{{ $t('押金规则') }}</span>
+        <span class="money-rule"
+              @click="$utils.toRoute('MoneyRule', '押金规则')">
+          {{ $t('押金规则') }}
+        </span>
       </template>
     </nav-bar>
     <div class="container">
       <div class="manage-box">
-        <div class="manageItem" v-for="item in manageList" :key="item.title" @click="handleClick(item)">
+        <div class="manageItem"
+             v-for="item in manageList"
+             :key="item.title"
+             @click="$utils.toRoute(item.name , item.label)">
           <span>{{ item.title }}</span>
-          <van-image :src="require('@/assets/mine/right-arrow-icon.png')"></van-image>
+          <van-image :src="require('@/assets/mine/right-arrow-icon.png')"/>
         </div>
       </div>
     </div>
@@ -18,46 +24,29 @@
 
 <script>
 export default {
-  name: "deposit-manage",
+  name: "DepositManage",
   data() {
     const manageList = [
       {
         title: this.$t('缴纳押金'),
-        name: 'payDeposit',
+        name: 'PayDeposit',
         label: '缴纳押金'
       },
       {
         title: this.$t('提取押金'),
-        name: 'withdrawDeposit',
+        name: 'WithdrawDeposit',
         label: '提取押金'
       },
       {
         title: this.$t('押金记录'),
-        name: 'depositRecord',
+        name: 'DepositRecord',
         label: '押金记录'
       },
     ]
     return {
       manageList,
     }
-  },
-  methods: {
-    handleClick({name, label}) {
-      this.$router.push({
-        name,
-        label
-      })
-    },
-    handleToMoneyRule() {
-      this.$router.push({
-        name: 'moneyRule',
-        label: '押金规则',
-        query: {
-          id: this.id
-        }
-      })
-    },
-  },
+  }
 }
 </script>
 
@@ -66,9 +55,6 @@ export default {
   font-family: PingFang-SC-Medium;
   text-decoration: underline;
   font-size: 12px;
-  font-weight: normal;
-  font-stretch: normal;
-  letter-spacing: 0px;
   color: #666666;
 }
 
@@ -90,10 +76,7 @@ export default {
       span {
         font-family: PingFang-SC-Medium;
         font-size: 14px;
-        font-weight: normal;
-        font-stretch: normal;
         line-height: 14px;
-        letter-spacing: 0px;
         color: #333333;
       }
 

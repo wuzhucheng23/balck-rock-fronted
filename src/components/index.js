@@ -1,17 +1,11 @@
-import Vue from 'vue'
+import Vue from 'vue';
+import TabBar from '@/components/global-components/tab-bar';
+import NavBar from '@/components/global-components/nav-bar';
+import BackTop from '@/components/global-components/back-top';
+import ResultDialog from '@/components/global-components/result-dialog';
 
-// 底部导航栏
-import TabBar from './tab-bar'
-Vue.component('tab-bar', TabBar)
-
-// 顶部导航栏
-import NavBar from './nav-bar'
-Vue.component('nav-bar', NavBar)
-
-// 回到顶部
-import BackTop from './back-top'
-Vue.component('back-top', BackTop)
-
-// 结果弹窗
-import ResultDialog from './result-dialog'
-Vue.component('result-dialog', ResultDialog)
+// 注册全局组件
+Vue.component('tab-bar', TabBar);   // 底部导航栏
+Vue.component('nav-bar', NavBar);   // 顶部导航栏
+Vue.component('back-top', BackTop); // 回到顶部
+Vue.component('result-dialog', ResultDialog);   // 结果弹窗

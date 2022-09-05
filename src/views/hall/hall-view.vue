@@ -6,7 +6,7 @@
 
 <script>
 export default {
-  name: "hall-view"
+  name: "HallView"
 }
 </script>
 

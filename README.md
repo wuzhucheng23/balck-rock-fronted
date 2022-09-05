@@ -1,4 +1,4 @@
-# pro-fronted
+# study-fronted
 
 ## Project setup
 ```

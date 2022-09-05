@@ -1,77 +1,77 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+import loginChildren from '@/router/login'
+import homeChildren from '@/router/home'
+import hallChildren from '@/router/hall'
+import robotChildren from '@/router/robot'
+import serviceChildren from '@/router/service'
+import mineChildren from '@/router/mine'
+
 Vue.use(VueRouter)
 
-import loginRouter from '@/views/login/login-router'
-import homeRouter from '@/views/home/home-router'
-import hallRouter from '@/views/hall/hall-router'
-import robotRouter from '@/views/robot/robot-router'
-import serviceRouter from '@/views/service/service-router'
-import mineRouter from '@/views/mine/mine-router'
-
 const routes = [
-  {
-    path: '/',
-    redirect: '/login/index'
-  },
-  {
-    path: '/login',
-    fullPath: '/login',
-    name: 'login',
-    label: '登陆路由',
-    component: () => import('@/views/login/login-view'),
-    redirect: '/login/index',
-    children: loginRouter
-  },
-  {
-    path: '/home',
-    fullPath: '/home',
-    name: 'home',
-    label: '首页路由',
-    component: () => import('@/views/home/home-view'),
-    redirect: '/home/index',
-    children: homeRouter
-  },
-  {
-    path: '/hall',
-    fullPath: '/hall',
-    name: 'hall',
-    label: '大厅路由',
-    component: () => import('@/views/hall/hall-view'),
-    redirect: '/hall/index',
-    children: hallRouter
-  },
-  {
-    path: '/robot',
-    fullPath: '/robot',
-    name: 'robot',
-    label: '机器人路由',
-    component: () => import('@/views/robot/robot-view'),
-    redirect: '/robot/index',
-    children: robotRouter
-  },
-  {
-    path: '/service',
-    fullPath: '/service',
-    name: 'service',
-    label: '客服路由',
-    component: () => import('@/views/service/service-view'),
-    redirect: '/service/index',
-    children: serviceRouter
-  },
-  {
-    path: '/mine',
-    fullPath: '/mine',
-    name: 'mine',
-    label: '我的路由',
-    component: () => import('@/views/mine/mine-view'),
-    redirect: '/mine/index',
-    children: mineRouter
-  }
+    {
+        path: '/',
+        redirect: '/login'
+    },
+    {
+        path: '/login',
+        fullPath: '/login',
+        name: 'Login',
+        label: '登陆模块',
+        component: () => import('@/views/login/login-view'),
+        redirect: '/login/login-index',
+        children: loginChildren
+    },
+    {
+        path: '/home',
+        fullPath: '/home',
+        name: 'Home',
+        label: '首页模块',
+        component: () => import('@/views/home/home-view'),
+        redirect: '/home/home-index',
+        children: homeChildren
+    },
+    {
+        path: '/hall',
+        fullPath: '/hall',
+        name: 'Hall',
+        label: '大厅模块',
+        component: () => import('@/views/hall/hall-view'),
+        redirect: '/hall/hall-index',
+        children: hallChildren
+    },
+    {
+        path: '/robot',
+        fullPath: '/robot',
+        name: 'Robot',
+        label: '机器人模块',
+        component: () => import('@/views/robot/robot-view'),
+        redirect: '/robot/robot-index',
+        children: robotChildren
+    },
+    {
+        path: '/service',
+        fullPath: '/service',
+        name: 'Service',
+        label: '客服模块',
+        component: () => import('@/views/service/service-view'),
+        redirect: '/service/service-index',
+        children: serviceChildren
+    },
+    {
+        path: '/mine',
+        fullPath: '/mine',
+        name: 'Mine',
+        label: '我的模块',
+        component: () => import('@/views/mine/mine-view'),
+        redirect: '/mine/mine-index',
+        children: mineChildren
+    }
 ]
 
 const router = new VueRouter({
-  routes
+    routes
 })
 
 export default router

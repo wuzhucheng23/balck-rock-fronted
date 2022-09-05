@@ -1,6 +1,6 @@
 <template>
   <div class="my-robot sub-page">
-    <nav-bar :title="$t('存币生息')"></nav-bar>
+    <nav-bar :title="$t('存币生息')"/>
     <div class="container">
       <van-loading type="spinner" v-if="loading">{{ $t('加载中...') }}</van-loading>
       <van-empty :description="$t('空空如也')" v-if="isEmpty"/>
@@ -12,9 +12,15 @@
           </div>
           <div class="middle-wrap">
             <span>{{ $t('购买时间') }}：{{ item.addtime }}</span>
-            <span v-if="new Date().getTime() > new Date(item.endtime).getTime() ? true : false"
-                  class="finished">{{ $t('已结算至资产余额') }}</span>
-            <van-count-down :time="'time' | timeFormat(item)" format="DD天HH时mm分ss秒" @finish="handleFinish" v-else/>
+            <span v-if="isSettlement(item.endtime)" class="finished">
+              {{ $t('已结算至资产余额') }}
+            </span>
+            <van-count-down
+                v-else
+                :time="'time' | timeFormat(item)"
+                format="DD天HH时mm分ss秒"
+                @finish="getList"
+            />
           </div>
           <div class="bottom-wrap">
             <div class="left">
@@ -41,7 +47,7 @@
 
 <script>
 export default {
-  name: "my-robot",
+  name: "MyRobot",
   data() {
     return {
       robotList: []
@@ -50,7 +56,12 @@ export default {
   computed: {
     isEmpty() {
       return this.robotList.length === 0 && !this.loading
-    }
+    },
+    isSettlement() {
+      return function (endtime) {
+        return new Date().getTime() > new Date(endtime).getTime() ? true : false
+      }
+    },
   },
   filters: {
     timeFormat(value, item) {
@@ -58,7 +69,7 @@ export default {
       const endTime = new Date(item.endtime).getTime()
       const time = endTime - currentTime
       return time
-    }
+    },
   },
   created() {
     this.getList()
@@ -80,9 +91,6 @@ export default {
         this.loading = false
       }
     },
-    handleFinish(item) {
-      this.getList()
-    }
   },
 }
 </script>
@@ -91,13 +99,16 @@ export default {
 .van-loading {
   color: #ffffff;
   text-align: center;
+
   ::v-deep .van-loading__text {
     color: #ffffff;
   }
 }
+
 ::v-deep .van-empty__description {
   color: #ffffff;
 }
+
 .container {
   padding: 20px 15px;
   height: calc(100% - 50px);
@@ -121,20 +132,14 @@ export default {
       span:first-child {
         font-family: PingFang-SC-Bold;
         font-size: 18px;
-        font-weight: normal;
-        font-stretch: normal;
         line-height: 12px;
-        letter-spacing: 0px;
         color: #333333;
       }
 
       span:last-child {
         font-family: PingFang-SC-Medium;
         font-size: 12px;
-        font-weight: normal;
-        font-stretch: normal;
         line-height: 12px;
-        letter-spacing: 0px;
         color: #666666;
       }
     }
@@ -145,20 +150,14 @@ export default {
 
       span {
         font-size: 12px;
-        font-weight: normal;
-        font-stretch: normal;
         line-height: 12px;
-        letter-spacing: 0px;
         color: #999999;
         margin-bottom: 20px;
       }
 
       .van-count-down {
         font-size: 12px;
-        font-weight: normal;
-        font-stretch: normal;
         line-height: 12px;
-        letter-spacing: 0px;
         color: #999999;
         margin-bottom: 20px;
       }
@@ -177,20 +176,14 @@ export default {
         margin-bottom: 13px;
         font-family: PingFang-SC-Medium;
         font-size: 12px;
-        font-weight: normal;
-        font-stretch: normal;
         line-height: 12px;
-        letter-spacing: 0px;
         color: #f6d79b;
       }
 
       .bottom-text {
         font-family: PingFang-SC-Bold;
         font-size: 16px;
-        font-weight: normal;
-        font-stretch: normal;
         line-height: 12px;
-        letter-spacing: 0px;
         color: #f6d79b;
       }
     }

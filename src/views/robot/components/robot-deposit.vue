@@ -1,38 +1,59 @@
 <template>
-  <div class="robot-robot-deposit sub-page">
-    <nav-bar :title="$t('转入')"></nav-bar>
+  <div class="robot-deposit sub-page">
+    <nav-bar :title="$t('转入')"/>
     <div class="container">
       <div class="money-box">
         <div class="title">{{ $t('从我的余额转入资产余额') }}</div>
         <div class="content">
           <div class="text">{{ $t('转入金额') }}</div>
           <div class="field">
-            <van-field v-model="money" type="number" :placeholder="$t('请输入转入金额')" label="$" label-width="25px"></van-field>
+            <van-field
+                v-model="money"
+                type="number"
+                label="$"
+                label-width="25px"
+                :placeholder="$t('请输入转入金额')"
+            />
           </div>
-          <div class="my-money">{{ $t('您的余额') }}：<span class="money">${{ balance }}</span></div>
+          <div class="my-money">
+            <span>{{ $t('您的余额') }}：</span>
+            <span class="money">${{ balance }}</span>
+          </div>
         </div>
       </div>
       <div class="btn-box">
-        <van-button block @click="handleDeposit" :loading="buttonLoading"
-                    loading-type="spinner" :loading-text="$t('正在转入...')">{{ $t('转入') }}</van-button>
+        <van-button
+            block
+            loading-type="spinner"
+            :loading="buttonLoading"
+            :loading-text="$t('正在转入...')"
+            @click="handleDeposit">
+          <span>{{ $t('转入') }}</span>
+        </van-button>
       </div>
       <div class="tip-box">
         <div class="title">{{ $t('说明') }}：</div>
-        <div class="content">{{ $t('从我的余额转入资产余额，用于购买方案，资产余额可提现至我的余额。') }}</div>
+        <div class="content">
+          {{ $t('从我的余额转入资产余额，用于购买方案，资产余额可提现至我的余额。') }}
+        </div>
       </div>
     </div>
-    <result-dialog :visible.sync="showResult" :result="$t('转入成功')" :btn="false" :desc="$t('正在跳转页面...')"></result-dialog>
+    <result-dialog
+        :visible.sync="showResult"
+        :result="$t('转入成功')"
+        :btn="false"
+        :desc="$t('正在跳转页面...')"
+    />
   </div>
 </template>
 
 <script>
 export default {
-  name: "robot-deposit",
+  name: "RobotDeposit",
   data() {
     return {
       money: '',
       balance: '0.00',
-      loading: false,
       showResult: false,
       buttonLoading: false
     }
@@ -41,9 +62,8 @@ export default {
     this.profile()
   },
   methods: {
-    async profile () {
+    async profile() {
       try {
-        this.loading = true
         const resp = await this.$api.home.profile();
         if (resp.code === 1) {
           const data = resp.data
@@ -53,12 +73,10 @@ export default {
         }
       } catch (e) {
         this.$toast.fail(this.$t('发生错误'));
-      } finally {
-        this.loading = false
       }
     },
     async handleDeposit() {
-      if (!this.money) return  this.$toast(this.$t('请输入转入金额'))
+      if (!this.money) return this.$toast(this.$t('请输入转入金额'))
       try {
         this.buttonLoading = true
         const params = {
@@ -67,7 +85,6 @@ export default {
         }
         const resp = await this.$api.robot.transfer(params);
         if (resp.code === 1) {
-          // this.$toast.success(this.$t('转入成功'))
           this.showResult = true
           this.$utils.delayBack()
         } else {
@@ -96,9 +113,6 @@ export default {
       line-height: 50px;
       font-family: PingFang-SC-Medium;
       font-size: 14px;
-      font-weight: normal;
-      font-stretch: normal;
-      letter-spacing: 0px;
       color: #fc6324;
     }
 
@@ -110,10 +124,7 @@ export default {
       .text {
         font-family: PingFang-SC-Medium;
         font-size: 14px;
-        font-weight: normal;
-        font-stretch: normal;
         line-height: 19px;
-        letter-spacing: 0px;
         color: #333333;
         margin-bottom: 12px;
       }
@@ -129,10 +140,7 @@ export default {
         ::v-deep .van-field__label {
           font-family: PingFang-SC-Medium;
           font-size: 18px;
-          font-weight: normal;
-          font-stretch: normal;
           line-height: 19px;
-          letter-spacing: 0px;
           color: #333333;
         }
       }
@@ -140,19 +148,13 @@ export default {
       .my-money {
         font-family: PingFang-SC-Medium;
         font-size: 12px;
-        font-weight: normal;
-        font-stretch: normal;
         line-height: 19px;
-        letter-spacing: 0px;
         color: #999999;
 
         .money {
           font-family: PingFang-SC-Medium;
           font-size: 12px;
-          font-weight: normal;
-          font-stretch: normal;
           line-height: 19px;
-          letter-spacing: 0px;
           color: #fc6324;
         }
       }
@@ -169,10 +171,7 @@ export default {
       border-radius: 10px;
       font-family: PingFang-SC-Medium;
       font-size: 14px;
-      font-weight: normal;
-      font-stretch: normal;
       line-height: 12px;
-      letter-spacing: 0px;
       color: #ffffff;
     }
   }
@@ -181,10 +180,7 @@ export default {
     padding: 0 15px;
     font-family: PingFang-SC-Medium;
     font-size: 12px;
-    font-weight: normal;
-    font-stretch: normal;
     line-height: 14px;
-    letter-spacing: 0px;
     color: #333333;
 
     .title {
